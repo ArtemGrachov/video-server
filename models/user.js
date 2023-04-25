@@ -16,10 +16,14 @@ module.exports = (sequelize, DataTypes) => {
   User.init({
     email: DataTypes.STRING,
     password: DataTypes.STRING,
-    name: DataTypes.STRING
+    name: DataTypes.STRING,
+    avatarId: DataTypes.INTEGER,
   }, {
     sequelize,
     modelName: 'User',
   });
+  User.associate = (models) => {
+    User.hasOne(models.Media, { sourceKey: 'avatarId' });
+  }
   return User;
 };
