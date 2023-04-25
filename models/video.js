@@ -10,7 +10,14 @@ module.exports = (sequelize, DataTypes) => {
      * The `models/index` file will call this method automatically.
      */
     static associate(models) {
-      // define association here
+      Video.hasOne(models.Media, { sourceKey: 'videoId' });
+      Video.belongsTo(
+        models.User,
+        {
+          foreignKey: 'authorId',
+          onDelete: 'CASCADE'
+        }
+      );
     }
   }
   Video.init({
@@ -22,15 +29,5 @@ module.exports = (sequelize, DataTypes) => {
     sequelize,
     modelName: 'Video',
   });
-  Video.associate = (models) => {
-    Video.hasOne(models.Media, { sourceKey: 'videoId' });
-    Video.belongsTo(
-      models.User,
-      {
-        foreignKey: 'authorId',
-        onDelete: 'CASCADE'
-      }
-    );
-  }
   return Video;
 };
