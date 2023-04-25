@@ -22,5 +22,15 @@ module.exports = (sequelize, DataTypes) => {
     sequelize,
     modelName: 'Video',
   });
+  Video.associate = (models) => {
+    Video.hasOne(models.Media, { sourceKey: 'videoId' });
+    Video.belongsTo(
+      models.User,
+      {
+        foreignKey: 'authorId',
+        onDelete: 'CASCADE'
+      }
+    )
+  }
   return Video;
 };

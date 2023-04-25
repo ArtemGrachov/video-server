@@ -24,6 +24,7 @@ module.exports = (sequelize, DataTypes) => {
   });
   User.associate = (models) => {
     User.hasOne(models.Media, { sourceKey: 'avatarId' });
+    User.hasMany(models.Video, { foreignKey: 'authorId' });
   }
   return User;
 };

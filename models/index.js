@@ -5,6 +5,7 @@ const config = require('../config/database');
 
 const User = require('./user');
 const Media = require('./media');
+const Video = require('./video');
 
 const db = {};
 
@@ -21,7 +22,7 @@ const sequelize = new Sequelize(
   },
 );
 
-const models = [User, Media];
+const models = [User, Media, Video];
 
 models.forEach(m => {
   const model = m(sequelize, Sequelize.DataTypes);
