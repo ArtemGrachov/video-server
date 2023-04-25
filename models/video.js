@@ -30,7 +30,7 @@ module.exports = (sequelize, DataTypes) => {
         foreignKey: 'authorId',
         onDelete: 'CASCADE'
       }
-    )
+    );
   }
   return Video;
 };

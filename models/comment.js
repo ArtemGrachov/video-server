@@ -10,7 +10,13 @@ module.exports = (sequelize, DataTypes) => {
      * The `models/index` file will call this method automatically.
      */
     static associate(models) {
-      // define association here
+      Comment.belongsTo(
+        models.Video,
+        {
+          foreignKey: 'referenceId',
+          onDelete: 'CASCADE'
+        }
+      )
     }
   }
   Comment.init({
