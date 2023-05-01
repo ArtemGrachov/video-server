@@ -5,7 +5,7 @@ const {
 module.exports = (sequelize, DataTypes) => {
   class Like extends Model {
     static associate(models) {
-      Video.belongsTo(
+      Like.belongsTo(
         models.User,
         {
           foreignKey: 'authorId',

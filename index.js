@@ -1,5 +1,6 @@
 const Koa = require('koa');
 const KoaRouter = require('koa-router');
+const { koaBody } = require('koa-body');
 const cors = require('@koa/cors');
 const dotenv = require('dotenv');
 
@@ -7,8 +8,14 @@ dotenv.config();
 
 const database = require('./models');
 
+const authRouter = require('./routes/auth');
+
 const app = new Koa();
 const router = new KoaRouter();
+
+router.use(koaBody());
+
+router.use('/auth', authRouter.routes());
 
 router.get('/', (ctx, next) => {
     ctx.body = 'App works!';
@@ -19,5 +26,8 @@ app
     .use(router.routes())
     .use(router.allowedMethods());
 
-app.listen(process.env.PORT ?? 3000);
+const port = process.env.PORT ?? 3000;
 
+app.listen(port);
+
+console.log(`Server is running at http://localhost:${port}/`);
