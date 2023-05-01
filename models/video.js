@@ -28,6 +28,14 @@ module.exports = (sequelize, DataTypes) => {
           },
         },
       );
+      Video.belongsToMany(
+        models.Playlist,
+        {
+          through: 'PlaylistVideos',
+          as: 'videos',
+          foreignKey: 'videoId',
+        },
+      );
     }
   }
   Video.init({
