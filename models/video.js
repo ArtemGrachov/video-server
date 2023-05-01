@@ -18,6 +18,16 @@ module.exports = (sequelize, DataTypes) => {
           onDelete: 'CASCADE'
         }
       );
+      Video.hasMany(
+        models.Like,
+        {
+          foreignKey: 'referenceId',
+          constraints: false,
+          scope: {
+            referenceType: 'video',
+          },
+        },
+      );
     }
   }
   Video.init({
