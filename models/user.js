@@ -1,27 +1,42 @@
-'use strict';
-const {
-  Model
-} = require('sequelize');
+const { Model } = require('sequelize');
+const jwt = require('jsonwebtoken');
+
 module.exports = (sequelize, DataTypes) => {
-  class User extends Model {
-    /**
-     * Helper method for defining associations.
-     * This method is not a part of Sequelize lifecycle.
-     * The `models/index` file will call this method automatically.
-     */
-    static associate(models) {
-      User.hasOne(models.Media, { sourceKey: 'avatarId' });
-      User.hasMany(models.Video, { foreignKey: 'authorId' });
+    class User extends Model {
+        static associate(models) {
+            User.hasOne(models.Media, { sourceKey: 'avatarId' });
+            User.hasMany(models.Video, { foreignKey: 'authorId' });
+        }
     }
-  }
-  User.init({
-    email: DataTypes.STRING,
-    password: DataTypes.STRING,
-    name: DataTypes.STRING,
-    avatarId: DataTypes.INTEGER,
-  }, {
-    sequelize,
-    modelName: 'User',
-  });
-  return User;
+
+    User.init(
+        {
+            email: DataTypes.STRING,
+            password: DataTypes.STRING,
+            name: DataTypes.STRING,
+            avatarId: DataTypes.INTEGER,
+        },
+        {
+            sequelize,
+            modelName: 'User',
+        }
+    );
+
+    User.prototype.getAuthTokens = function () {
+        const token = jwt.sign(
+            { userId: this.id },
+            process.env.JWT_KEY,
+            { expiresIn: process.env.JWT_LIFE }
+        );
+
+        const refreshToken = jwt.sign(
+            { userId: this.id },
+            process.env.JWT_REFRESH_KEY,
+            { expiresIn: process.env.JWT_REFRESH_LIFE }
+        );
+
+        return { token, refreshToken };
+    }
+
+    return User;
 };
