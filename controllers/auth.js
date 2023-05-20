@@ -1,4 +1,5 @@
 const bcrypt = require('bcryptjs');
+const jwt = require('jsonwebtoken');
 
 const { ERRORS } = require('../constants/errors');
 const { VALIDATION_RULES } = require('../constants/validation');
@@ -97,6 +98,34 @@ module.exports = {
             if (!passwordCheck) {
                 throw errorFactory(401, ERRORS.INCORRECT_EMAIL_OR_PASSWORD);
             }
+
+            const tokens = user.getAuthTokens();
+
+            ctx.status = 200;
+            ctx.body = tokens;
+        } catch (error) {
+            console.log(error);
+            ctx.status = error?.code ?? 500;
+            ctx.body = error?.data;
+        }
+    },
+
+    async refreshToken(ctx) {
+        try {
+            const { refreshToken } = ctx.request.body;
+
+            let decodedToken;
+
+            try {
+                decodedToken = jwt.verify(refreshToken, process.env.JWT_REFRESH_KEY);
+            } catch (err) {
+                console.log(err);
+                throw errorFactory(401, ERRORS.INVALID_REFRESH_TOKEN);
+            }
+
+            const { userId } = decodedToken;
+
+            const user = await User.findByPk(userId);
 
             const tokens = user.getAuthTokens();
 
