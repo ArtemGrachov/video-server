@@ -1,17 +1,28 @@
+const bcrypt = require('bcryptjs');
+
 const { ERRORS } = require('../constants/errors');
 const { VALIDATION_RULES } = require('../constants/validation');
 
+const database = require('../models');
+
 const { isEmail, validatePassword } = require('../utils/validators');
+
+const { User } = database.sequelize.models;
 
 module.exports = {
     async registration(ctx) {
         try {
             const { body } = ctx.request;
 
+            const name = body.name ?? '';
             const email = body.email ?? '';
             const password = body.password ?? '';
 
-            const validation = { email: [], password: [] };
+            const validation = { name: [], email: [], password: [] };
+
+            if (!name.trim()) {
+                validation.name.push({ rule: VALIDATION_RULES.REQUIRED });
+            }
 
             if (!email.trim()) {
                 validation.email.push({ rule: VALIDATION_RULES.REQUIRED });
@@ -38,6 +49,14 @@ module.exports = {
                     }
                 };
             }
+
+            const passwordHash = await bcrypt.hash(password, 10);
+
+            await User.create({
+                name,
+                email,
+                password: passwordHash
+            });
 
             ctx.body = { success: true };
         } catch (error) {
