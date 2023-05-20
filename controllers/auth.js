@@ -163,5 +163,60 @@ module.exports = {
             ctx.status = error?.code ?? 500;
             ctx.body = error?.data;
         }
+    },
+
+    async resetPassword(ctx) {
+        try {
+            const { resetPasswordToken, password, passwordConfirmation } = ctx.request.body;
+
+            let decodedToken;
+
+            try {
+                decodedToken = jwt.verify(resetPasswordToken, process.env.RESET_PASSWORD_TOKEN);
+            } catch (err) {
+                throw errorFactory(401, ERRORS.INVALID_RESET_PASSWORD_TOKEN);
+            }
+
+            const { userId } = decodedToken;
+
+            const user = await User.findByPk(userId);
+
+            if (!user) {
+                throw errorFactory(401, ERRORS.INVALID_RESET_PASSWORD_TOKEN);
+            }
+
+            const validation = { password: [], passwordConfirmation: [] };
+
+            if (!password.trim()) {
+                validation.password.push({ rule: VALIDATION_RULES.REQUIRED });
+            } else if (!validatePassword(password)) {
+                validation.password.push({ rule: VALIDATION_RULES.VALIDATION_RULES })
+            }
+
+            if (!passwordConfirmation.trim()) {
+                validation.passwordConfirmation.push({ rule: VALIDATION_RULES.REQUIRED });
+            } else if (password !== passwordConfirmation) {
+                validation.passwordConfirmation.push({ rule: VALIDATION_RULES.REQUIRED });
+            }
+
+            if (Object.keys(validation).some(k => validation[k].length)) {
+                throw errorFactory(400, ERRORS.VALIDATION, validation);
+            }
+
+            const passwordHash = await bcrypt.hash(password, 10);
+
+            user.password = passwordHash;
+
+            await user.save();
+
+            ctx.status = 200;
+            ctx.body = {
+                message: SUCCESS.PASWORD_UPDATED_SUCCESSFULLY
+            };
+        } catch (error) {
+            console.log(error);
+            ctx.status = error?.code ?? 500;
+            ctx.body = error?.data;
+        }
     }
 };

@@ -7,5 +7,6 @@ authRouter.post('/registration', authController.registration);
 authRouter.post('/log-in', authController.logIn);
 authRouter.post('/refresh-token', authController.refreshToken);
 authRouter.post('/reset-password-request', authController.generatePasswordResetToken);
+authRouter.post('/reset-password', authController.resetPassword);
 
 module.exports = authRouter;
