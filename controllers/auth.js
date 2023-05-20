@@ -72,7 +72,7 @@ module.exports = {
         if (!password.trim()) {
             validation.password.push({ rule: VALIDATION_RULES.REQUIRED });
         } else if (!validatePassword(password)) {
-            validation.password.push({ rule: VALIDATION_RULES.VALIDATION_RULES })
+            validation.password.push({ rule: VALIDATION_RULES.VALIDATION_RULES });
         }
 
         if (Object.keys(validation).some(k => validation[k].length)) {
@@ -173,7 +173,7 @@ module.exports = {
         if (!password.trim()) {
             validation.password.push({ rule: VALIDATION_RULES.REQUIRED });
         } else if (!validatePassword(password)) {
-            validation.password.push({ rule: VALIDATION_RULES.VALIDATION_RULES })
+            validation.password.push({ rule: VALIDATION_RULES.VALIDATION_RULES });
         }
 
         if (!passwordConfirmation.trim()) {
