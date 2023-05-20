@@ -3,6 +3,7 @@ const KoaRouter = require('koa-router');
 const { koaBody } = require('koa-body');
 const cors = require('@koa/cors');
 const dotenv = require('dotenv');
+const path = require('path');
 
 dotenv.config();
 
@@ -15,7 +16,12 @@ const errorMiddleware = require('./middlewares/error');
 const app = new Koa();
 const router = new KoaRouter();
 
-router.use(koaBody());
+router.use(koaBody({
+    multipart: true,
+    formidable: {
+        uploadDir: path.resolve(__dirname, 'uploads')
+    }
+}));
 router.use(errorMiddleware);
 
 router.use('/auth', authRouter.routes());

@@ -32,13 +32,14 @@ module.exports = (sequelize, DataTypes) => {
         }
 
         serialize() {
-            const { id, name, description, authorId } = this;
+            const { id, name, description, authorId, mediaId } = this;
 
             return {
                 id,
                 name,
                 description,
                 authorId,
+                mediaId
             };
         }
     }

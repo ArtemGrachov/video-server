@@ -4,14 +4,16 @@ const { VALIDATION_RULES } = require('../constants/validation');
 const database = require('../models');
 
 const { errorFactory } = require('../utils/error-factory');
+const { upload, removeLocalFile } = require('../utils/upload');
 
-const { Video } = database.sequelize.models;
+const { Video, Media } = database.sequelize.models;
 
 module.exports = {
     async createVideo(ctx) {
-        const { body } = ctx.request;
+        const { body, files } = ctx.request;
         const name = body.name ?? '';
         const description = body.description ?? '';
+        const fileVideo = files.video ?? null;
 
         const validation = { name: [], description: [] };
 
@@ -23,13 +25,21 @@ module.exports = {
             throw errorFactory(400, ERRORS.VALIDATION, validation);
         }
 
-        // @todo upload video
+        const cloudVideo = await upload(fileVideo.newFilename, 'video');
+
+        removeLocalFile(fileVideo.newFilename);
+
+        const media = await Media.create({
+            externalId: cloudVideo.public_id
+        });
+
         const video = await Video.create({
             name,
             description,
-            authorId: ctx.user.id
+            authorId: ctx.user.id,
+            videoId: media.id
         });
 
         ctx.body = video.serialize();
-    }
+    },
 };
