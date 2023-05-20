@@ -1,6 +1,8 @@
 const bcrypt = require('bcryptjs');
 const jwt = require('jsonwebtoken');
 
+const mail = require('../mail');
+
 const { VALIDATION_RULES } = require('../constants/validation');
 const { SUCCESS } = require('../constants/success');
 const { ERRORS } = require('../constants/errors');
@@ -54,7 +56,7 @@ module.exports = {
             ctx.body = { success: true };
         } catch (error) {
             console.log(error);
-            ctx.status = error?.code ?? 500;
+            ctx.status = error?.status ?? 500;
             ctx.body = error?.data;
         }
     },
@@ -106,7 +108,7 @@ module.exports = {
             ctx.body = tokens;
         } catch (error) {
             console.log(error);
-            ctx.status = error?.code ?? 500;
+            ctx.status = error?.status ?? 500;
             ctx.body = error?.data;
         }
     },
@@ -134,7 +136,7 @@ module.exports = {
             ctx.body = tokens;
         } catch (error) {
             console.log(error);
-            ctx.status = error?.code ?? 500;
+            ctx.status = error?.status ?? 500;
             ctx.body = error?.data;
         }
     },
@@ -151,8 +153,14 @@ module.exports = {
 
             const resetPasswordToken = user.getResetPasswordToken();
 
-            // @todo
-            console.log(`Token: ${resetPasswordToken}`);
+            const mailOptions = {
+                from: `'"${process.env.EMAIL_FROM_NAME}" <${process.env.EMAIL_FROM}>'`,
+                to: email,
+                subject: 'Password reset link',
+                text: `Your reset link is: ${resetPasswordToken}` // @todo
+            };
+
+            await mail.sendMail(mailOptions);
 
             ctx.status = 200;
             ctx.body = {
@@ -160,7 +168,7 @@ module.exports = {
             };
         } catch (error) {
             console.log(error);
-            ctx.status = error?.code ?? 500;
+            ctx.status = error?.status ?? 500;
             ctx.body = error?.data;
         }
     },
@@ -215,7 +223,7 @@ module.exports = {
             };
         } catch (error) {
             console.log(error);
-            ctx.status = error?.code ?? 500;
+            ctx.status = error?.status ?? 500;
             ctx.body = error?.data;
         }
     }

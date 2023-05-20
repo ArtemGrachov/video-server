@@ -1,6 +1,6 @@
-const errorFactory = (code, message, data) => {
+const errorFactory = (status, message, data) => {
     return {
-        code: code ?? 500,
+        status: status ?? 500,
         data: {
             message,
             ...data
