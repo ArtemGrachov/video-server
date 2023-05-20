@@ -9,6 +9,7 @@ dotenv.config();
 const database = require('./models');
 
 const authRouter = require('./routes/auth');
+const videoRouter = require('./routes/video');
 const errorMiddleware = require('./middlewares/error');
 
 const app = new Koa();
@@ -18,6 +19,7 @@ router.use(koaBody());
 router.use(errorMiddleware);
 
 router.use('/auth', authRouter.routes());
+router.use('/video', videoRouter.routes());
 
 router.get('/', (ctx, next) => {
     ctx.body = 'App works!';
