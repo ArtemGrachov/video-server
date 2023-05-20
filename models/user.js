@@ -38,5 +38,15 @@ module.exports = (sequelize, DataTypes) => {
         return { token, refreshToken };
     }
 
+    User.prototype.getResetPasswordToken = function() {
+        const resetPasswordToken = jwt.sign(
+            { userId: this.id },
+            process.env.RESET_PASSWORD_TOKEN,
+            { expiresIn: process.env.RESET_PASSWORD_TOKEN_LIFE }
+        );
+    
+        return resetPasswordToken;
+    }
+
     return User;
 };

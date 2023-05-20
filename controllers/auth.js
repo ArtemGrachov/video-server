@@ -1,8 +1,9 @@
 const bcrypt = require('bcryptjs');
 const jwt = require('jsonwebtoken');
 
-const { ERRORS } = require('../constants/errors');
 const { VALIDATION_RULES } = require('../constants/validation');
+const { SUCCESS } = require('../constants/success');
+const { ERRORS } = require('../constants/errors');
 
 const database = require('../models');
 
@@ -131,6 +132,32 @@ module.exports = {
 
             ctx.status = 200;
             ctx.body = tokens;
+        } catch (error) {
+            console.log(error);
+            ctx.status = error?.code ?? 500;
+            ctx.body = error?.data;
+        }
+    },
+
+    async generatePasswordResetToken(ctx) {
+        try {
+            const { email } = ctx.request.body;
+
+            const user = await User.findOne({ email });
+
+            if (!user) {
+                throw errorFactory(400, ERRORS.VALIDATION);
+            }
+
+            const resetPasswordToken = user.getResetPasswordToken();
+
+            // @todo
+            console.log(`Token: ${resetPasswordToken}`);
+
+            ctx.status = 200;
+            ctx.body = {
+                message: SUCCESS.RESET_PASSWORD_TOKEN_GENERATED_SUCCESSFULLY
+            };
         } catch (error) {
             console.log(error);
             ctx.status = error?.code ?? 500;
