@@ -9,11 +9,13 @@ dotenv.config();
 const database = require('./models');
 
 const authRouter = require('./routes/auth');
+const errorMiddleware = require('./middlewares/error');
 
 const app = new Koa();
 const router = new KoaRouter();
 
 router.use(koaBody());
+router.use(errorMiddleware);
 
 router.use('/auth', authRouter.routes());
 

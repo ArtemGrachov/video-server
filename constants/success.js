@@ -3,6 +3,4 @@ const SUCCESS = {
     PASWORD_UPDATED_SUCCESSFULLY: 'PASWORD_UPDATED_SUCCESSFULLY'
 };
 
-module.exports = {
-    SUCCESS
-};
+module.exports = SUCCESS;
