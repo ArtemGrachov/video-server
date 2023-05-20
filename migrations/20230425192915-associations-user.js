@@ -11,7 +11,7 @@ module.exports = {
         references: {
           model: 'Media',
           key: 'id',
-          as: 'avararId'
+          as: 'avatarId'
         }
       }
     );

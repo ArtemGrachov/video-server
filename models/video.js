@@ -3,7 +3,14 @@ const { Model } = require('sequelize');
 module.exports = (sequelize, DataTypes) => {
     class Video extends Model {
         static associate(models) {
-            Video.hasOne(models.Media, { sourceKey: 'videoId' });
+            Video.hasOne(
+                models.Media,
+                {
+                    sourceKey: 'mediaId',
+                    as: 'media',
+                    foreignKey: 'id'
+                }
+            );
             Video.belongsTo(
                 models.User,
                 {
@@ -31,15 +38,15 @@ module.exports = (sequelize, DataTypes) => {
             );
         }
 
-        serialize() {
-            const { id, name, description, authorId, mediaId } = this;
+        async serialize() {
+            const { id, name, description, authorId, media } = this;
 
             return {
                 id,
                 name,
                 description,
                 authorId,
-                mediaId
+                media: media?.serialize()
             };
         }
     }
@@ -49,7 +56,7 @@ module.exports = (sequelize, DataTypes) => {
             name: DataTypes.STRING,
             description: DataTypes.STRING,
             authorId: DataTypes.NUMBER,
-            videoId: DataTypes.NUMBER
+            mediaId: DataTypes.NUMBER
         },
         {
             sequelize,

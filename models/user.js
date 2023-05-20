@@ -4,7 +4,14 @@ const jwt = require('jsonwebtoken');
 module.exports = (sequelize, DataTypes) => {
     class User extends Model {
         static associate(models) {
-            User.hasOne(models.Media, { sourceKey: 'avatarId' });
+            User.hasOne(
+                models.Media,
+                {
+                    sourceKey: 'avatarId',
+                    as: 'user',
+                    foreignKey: 'referenceId'
+                }
+            );
             User.hasMany(models.Video, { foreignKey: 'authorId' });
         }
     }

@@ -8,6 +8,7 @@ const path = require('path');
 dotenv.config();
 
 const database = require('./models');
+const cloud = require('./cloud');
 
 const authRouter = require('./routes/auth');
 const videoRouter = require('./routes/video');

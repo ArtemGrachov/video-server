@@ -29,17 +29,35 @@ module.exports = {
 
         removeLocalFile(fileVideo.newFilename);
 
-        const media = await Media.create({
-            externalId: cloudVideo.public_id
-        });
-
-        const video = await Video.create({
-            name,
-            description,
-            authorId: ctx.user.id,
-            videoId: media.id
-        });
+        const video = await Video.create(
+            {
+                name,
+                description,
+                authorId: ctx.user.id,
+                media: {
+                    externalId: cloudVideo.public_id
+                }
+            },
+            {
+                include: [{
+                    association: Video.associations.media,
+                    as: 'media'
+                }]
+            }
+        );
 
         ctx.body = video.serialize();
     },
+
+    async getVideo(ctx) {
+        const videoId = ctx.params.id;
+
+        const video = await Video.findByPk(videoId, { include: 'media' });
+
+        if (!video) {
+            throw errorFactory(404, ERRORS.NOT_FOUND);
+        }
+
+        ctx.body = await video.serialize();
+    }
 };
