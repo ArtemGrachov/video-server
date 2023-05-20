@@ -16,43 +16,57 @@ const { User } = database.sequelize.models;
 
 module.exports = {
     async registration(ctx) {
-        const { body } = ctx.request;
+        try {
+            const { body } = ctx.request;
 
-        const name = body.name ?? '';
-        const email = body.email ?? '';
-        const password = body.password ?? '';
+            const name = body.name ?? '';
+            const email = body.email ?? '';
+            const password = body.password ?? '';
 
-        const validation = { name: [], email: [], password: [] };
+            const validation = { name: [], email: [], password: [] };
 
-        if (!name.trim()) {
-            validation.name.push({ rule: VALIDATION_RULES.REQUIRED });
+            if (!name.trim()) {
+                validation.name.push({ rule: VALIDATION_RULES.REQUIRED });
+            }
+
+            if (!email.trim()) {
+                validation.email.push({ rule: VALIDATION_RULES.REQUIRED });
+            } else if (!isEmail(email)) {
+                validation.email.push({ rule: VALIDATION_RULES.NOT_EMAIL });
+            }
+
+            if (!password.trim()) {
+                validation.password.push({ rule: VALIDATION_RULES.REQUIRED });
+            } else if (!validatePassword(password)) {
+                validation.password.push({ rule: VALIDATION_RULES.VALIDATION_RULES })
+            }
+
+            if (Object.keys(validation).some(k => validation[k].length)) {
+                throw errorFactory(400, ERRORS.VALIDATION, validation);
+            }
+
+            const passwordHash = await bcrypt.hash(password, 10);
+
+            await User.create({
+                name,
+                email,
+                password: passwordHash
+            });
+
+            ctx.body = { success: true };
+        } catch (error) {
+            if (!error.name === 'SequelizeUniqueConstraintError') {
+                throw error;
+            }
+
+            const isEmailUniqueError = (error.errors ?? []).some(e => e.type === 'unique violation' && e.path === 'email');
+
+            if (isEmailUniqueError) {
+                throw errorFactory(400, ERRORS.VALIDATION, { email: [{ rule: VALIDATION_RULES.UNIQUE }] });
+            }
+
+            throw error;
         }
-
-        if (!email.trim()) {
-            validation.email.push({ rule: VALIDATION_RULES.REQUIRED });
-        } else if (!isEmail(email)) {
-            validation.email.push({ rule: VALIDATION_RULES.NOT_EMAIL });
-        }
-
-        if (!password.trim()) {
-            validation.password.push({ rule: VALIDATION_RULES.REQUIRED });
-        } else if (!validatePassword(password)) {
-            validation.password.push({ rule: VALIDATION_RULES.VALIDATION_RULES })
-        }
-
-        if (Object.keys(validation).some(k => validation[k].length)) {
-            throw errorFactory(400, ERRORS.VALIDATION, validation);
-        }
-
-        const passwordHash = await bcrypt.hash(password, 10);
-
-        await User.create({
-            name,
-            email,
-            password: passwordHash
-        });
-
-        ctx.body = { success: true };
     },
 
     async logIn(ctx) {
