@@ -7,9 +7,11 @@ module.exports = (sequelize, DataTypes) => {
             User.hasOne(
                 models.Media,
                 {
-                    sourceKey: 'avatarId',
-                    as: 'user',
-                    foreignKey: 'referenceId'
+                    as: 'avatar',
+                    foreignKey: 'referenceId',
+                    scope: {
+                        referenceType: 'user'
+                    }
                 }
             );
             User.hasMany(models.Video, { foreignKey: 'authorId' });
@@ -23,8 +25,7 @@ module.exports = (sequelize, DataTypes) => {
                 unique: true
             },
             password: DataTypes.STRING,
-            name: DataTypes.STRING,
-            avatarId: DataTypes.INTEGER,
+            name: DataTypes.STRING
         },
         {
             sequelize,

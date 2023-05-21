@@ -6,9 +6,11 @@ module.exports = (sequelize, DataTypes) => {
             Video.hasOne(
                 models.Media,
                 {
-                    sourceKey: 'mediaId',
                     as: 'media',
-                    foreignKey: 'id'
+                    foreignKey: 'referenceId',
+                    scope: {
+                        referenceType: 'video'
+                    }
                 }
             );
             Video.belongsTo(
@@ -55,8 +57,7 @@ module.exports = (sequelize, DataTypes) => {
         {
             name: DataTypes.STRING,
             description: DataTypes.STRING,
-            authorId: DataTypes.NUMBER,
-            mediaId: DataTypes.NUMBER
+            authorId: DataTypes.NUMBER
         },
         {
             sequelize,

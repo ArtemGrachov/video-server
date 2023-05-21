@@ -34,17 +34,12 @@ module.exports = {
                 name,
                 description,
                 authorId: ctx.user.id,
-                media: {
-                    externalId: cloudVideo.public_id
-                }
-            },
-            {
-                include: [{
-                    association: Video.associations.media,
-                    as: 'media'
-                }]
             }
         );
+
+        await video.createMedia({
+            externalId: cloudVideo.public_id
+        });
 
         ctx.body = video.serialize();
     },

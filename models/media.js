@@ -9,22 +9,16 @@ module.exports = (sequelize, DataTypes) => {
                 models.Video,
                 {
                     foreignKey: 'referenceId',
-                    onDelete: 'CASCADE',
-                    as: 'video',
-                    scope: {
-                        referenceType: 'video'
-                    }
+                    constraints: false,
+                    as: 'media'
                 }
             );
             Media.belongsTo(
                 models.User,
                 {
                     foreignKey: 'referenceId',
-                    onDelete: 'CASCADE',
-                    as: 'avatar',
-                    scope: {
-                        referenceType: 'avatar'
-                    }
+                    constraints: false,
+                    as: 'avatar'
                 }
             );
         }
