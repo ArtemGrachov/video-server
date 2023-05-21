@@ -74,7 +74,8 @@ module.exports = {
                 'media',
                 {
                     model: User,
-                    as: 'author',include: 'avatar'
+                    as: 'author',
+                    include: 'avatar'
                 }
             ]
         });
@@ -153,7 +154,8 @@ module.exports = {
                     'media',
                     {
                         model: User,
-                        as: 'author',include: 'avatar'
+                        as: 'author',
+                        include: 'avatar'
                     }
                 ]
             }

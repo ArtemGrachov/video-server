@@ -28,7 +28,7 @@ module.exports = (sequelize, DataTypes) => {
                 id,
                 name,
                 description,
-                author: author.serialize()
+                author: author?.serialize()
             };
         }
     }

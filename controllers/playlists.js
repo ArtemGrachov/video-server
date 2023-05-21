@@ -1,4 +1,5 @@
 const ERRORS = require('../constants/errors');
+const { PLAYLISTS_PER_PAGE } = require('../constants/playlists');
 const { VALIDATION_RULES } = require('../constants/validation');
 
 const database = require('../models');
@@ -53,5 +54,35 @@ module.exports = {
         }
 
         ctx.body = playlist.serialize();
-    }
+    },
+
+    async getPlaylists(ctx) {
+        let { page, perPage } = ctx.query;
+        page = page ?? 1;
+        perPage = perPage ?? PLAYLISTS_PER_PAGE;
+
+        const limit = page * perPage;
+        const offset = (page - 1) * perPage;
+
+        const { count, rows } = await Playlist.findAndCountAll({
+            limit,
+            offset,
+            include: [
+                {
+                    model: User,
+                    as: 'author',
+                    include: 'avatar'
+                }
+            ]
+        });
+
+        ctx.body = {
+            pagination: {
+                page,
+                perPage,
+                total: count,
+            },
+            data: rows.map(p => p.serialize())
+        };
+    },
 }
