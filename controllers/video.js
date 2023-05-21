@@ -1,4 +1,5 @@
 const ERRORS = require('../constants/errors');
+const { MEDIA_TYPES } = require('../constants/media');
 const { VALIDATION_RULES } = require('../constants/validation');
 const { VIDEO_PER_PAGE } = require('../constants/video');
 
@@ -34,12 +35,13 @@ module.exports = {
             {
                 name,
                 description,
-                authorId: ctx.user.id,
+                authorId: ctx.user.id
             }
         );
 
         await video.createMedia({
-            externalId: cloudVideo.public_id
+            externalId: cloudVideo.public_id,
+            type: MEDIA_TYPES.VIDEO
         });
 
         ctx.body = video.serialize();

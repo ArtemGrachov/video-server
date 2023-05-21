@@ -1,5 +1,5 @@
 const { Model } = require('sequelize');
-const { MEDIA_REFERENCE_TYPES } = require('../constants/media');
+const { MEDIA_REFERENCE_TYPES, MEDIA_TYPES } = require('../constants/media');
 const cloudinary = require('cloudinary').v2;
 
 module.exports = (sequelize, DataTypes) => {
@@ -29,13 +29,13 @@ module.exports = (sequelize, DataTypes) => {
             let url = null;
             let thumbnailUrl = null;
 
-            switch (this.referenceType) {
-                case MEDIA_REFERENCE_TYPES.VIDEO: {
+            switch (this.type) {
+                case MEDIA_TYPES.VIDEO: {
                     url = cloudinary.utils.video_url(externalId);
                     thumbnailUrl = cloudinary.utils.video_thumbnail_url(externalId);
                     break;
                 }
-                case MEDIA_REFERENCE_TYPES.IMAGE: {
+                case MEDIA_TYPES.IMAGE: {
                     url = cloudinary.image(externalId);
                     break;
                 }
@@ -49,11 +49,19 @@ module.exports = (sequelize, DataTypes) => {
         {
             externalId: DataTypes.STRING,
             referenceId: DataTypes.INTEGER,
-            referenceType: DataTypes.STRING
+            referenceType: DataTypes.STRING,
+            type: DataTypes.STRING
         },
         {
             sequelize,
             modelName: 'Media',
+            hooks: {
+                async afterDestroy(media) {
+                    const { externalId, type } = media;
+
+                    await cloudinary.uploader.destroy(externalId, { resource_type: type });
+                }
+            }
         }
     );
 
