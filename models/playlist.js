@@ -6,6 +6,7 @@ module.exports = (sequelize, DataTypes) => {
             Playlist.belongsTo(
                 models.User,
                 {
+                    as: 'author',
                     foreignKey: 'authorId',
                     onDelete: 'CASCADE',
                 },
@@ -21,12 +22,13 @@ module.exports = (sequelize, DataTypes) => {
         }
 
         serialize() {
-            const { id, name, description } = this;
+            const { id, name, description, author } = this;
 
             return {
                 id,
                 name,
-                description
+                description,
+                author: author.serialize()
             };
         }
     }

@@ -1,8 +1,11 @@
+const ERRORS = require('../constants/errors');
 const { VALIDATION_RULES } = require('../constants/validation');
 
 const database = require('../models');
 
-const { Playlist } = database.sequelize.models;
+const { errorFactory } = require('../utils/error-factory');
+
+const { Playlist, User } = database.sequelize.models;
 
 module.exports = {
     async createPlaylist(ctx) {
@@ -25,6 +28,29 @@ module.exports = {
             description,
             authorId: ctx.user.id
         });
+
+        ctx.body = playlist.serialize();
+    },
+
+    async getPlaylist(ctx) {
+        const playlistId = ctx.params.id;
+
+        const playlist = await Playlist.findByPk(
+            playlistId,
+            {
+                include: [
+                    {
+                        model: User,
+                        as: 'author',
+                        include: 'avatar'
+                    }
+                ]
+            }
+        );
+
+        if (!playlist) {
+            throw errorFactory(404, ERRORS.NOT_FOUND);
+        }
 
         ctx.body = playlist.serialize();
     }
