@@ -162,5 +162,33 @@ module.exports = {
         );
 
         ctx.body = videoUpdated.serialize();
+    },
+
+    async videoCreateComment(ctx) {
+        const videoId = ctx.params.id;
+        const { body } = ctx.request;
+        const content = body?.content ?? '';
+
+        const validation = { content: [] };
+
+        if (!content.trim()) {
+            validation.content.push({ rule: VALIDATION_RULES.REQUIRED });
+        }
+
+        if (Object.keys(validation).some(k => validation[k].length)) {
+            throw errorFactory(400, ERRORS.VALIDATION, validation);
+        }
+
+        const video = await Video.findByPk(videoId, { include: 'media' });
+
+        if (!video) {
+            throw errorFactory(404, ERRORS.NOT_FOUND);
+        }
+
+        const comment = await video.createComment({
+            content
+        });
+
+        ctx.body = comment.serialize();
     }
 };
