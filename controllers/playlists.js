@@ -1,7 +1,9 @@
 const { Op } = require('sequelize');
+
 const ERRORS = require('../constants/errors');
 const { PLAYLISTS_PER_PAGE } = require('../constants/playlists');
 const { VALIDATION_RULES } = require('../constants/validation');
+const { VIDEO_PER_PAGE } = require('../constants/video');
 
 const database = require('../models');
 
@@ -194,5 +196,46 @@ module.exports = {
         await playlist.removePlaylistVideo(video);
 
         ctx.body = { success: true };
+    },
+
+    async getPlaylistVideos(ctx) {
+        const playlistId = ctx.params.id;
+        const playlist = await Playlist.findByPk(playlistId);
+
+        if (!playlist) {
+            throw errorFactory(404, ERRORS.NOT_FOUND);
+        }
+
+        let { page, perPage } = ctx.query;
+        page = page ?? 1;
+        perPage = perPage ?? VIDEO_PER_PAGE;
+
+        const limit = page * perPage;
+        const offset = (page - 1) * perPage;
+
+        const [count, rows] = await Promise.all([
+            playlist.countPlaylistVideos(),
+            playlist.getPlaylistVideos({
+                limit,
+                offset,
+                include: [
+                    'media',
+                    {
+                        model: User,
+                        as: 'author',
+                        include: 'avatar'
+                    }
+                ]
+            })
+        ])
+
+        ctx.body = {
+            pagination: {
+                page,
+                perPage,
+                total: count,
+            },
+            data: rows.map(v => v.serialize())
+        };
     }
 }
