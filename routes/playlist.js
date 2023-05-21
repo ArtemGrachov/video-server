@@ -9,5 +9,6 @@ playlistRouter.post('/', authMiddleware, playlistController.createPlaylist);
 playlistRouter.get('/', authMiddleware, playlistController.getPlaylists);
 playlistRouter.get('/:id', authMiddleware, playlistController.getPlaylist);
 playlistRouter.delete('/:id', authMiddleware, playlistAuthorMiddleware, playlistController.deletePlaylist);
+playlistRouter.patch('/:id', authMiddleware, playlistAuthorMiddleware, playlistController.updatePlaylist);
 
 module.exports = playlistRouter;

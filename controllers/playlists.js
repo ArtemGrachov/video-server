@@ -103,5 +103,50 @@ module.exports = {
         await playlist.destroy();
 
         ctx.body = { success: true };
+    },
+
+    async updatePlaylist(ctx) {
+        const { body } = ctx.request;
+
+        const name = body?.name;
+        const description = body?.description;
+
+        const validation = { name: [], description: [] };
+
+        if (name != null && !name.trim()) {
+            validation.name.push({ rule: VALIDATION_RULES.REQUIRED });
+        }
+
+        if (Object.keys(validation).some(k => validation[k].length)) {
+            throw errorFactory(400, ERRORS.VALIDATION, validation);
+        }
+
+        const playlistId = ctx.params.id;
+        const playlist = await Playlist.findByPk(playlistId);
+
+        if (name != null) {
+            playlist.name = name;
+        }
+
+        if (description != null) {
+            playlist.description = description;
+        }
+
+        await playlist.save();
+
+        const playlistUpdated = await Playlist.findByPk(
+            playlistId,
+            {
+                include: [
+                    {
+                        model: User,
+                        as: 'author',
+                        include: 'avatar'
+                    }
+                ]
+            }
+        );
+
+        ctx.body = playlistUpdated.serialize();
     }
 }
