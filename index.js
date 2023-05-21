@@ -12,6 +12,7 @@ const cloud = require('./cloud');
 
 const authRouter = require('./routes/auth');
 const videoRouter = require('./routes/video');
+const playlistRouter = require('./routes/playlist');
 const errorMiddleware = require('./middlewares/error');
 
 const app = new Koa();
@@ -27,6 +28,7 @@ router.use(errorMiddleware);
 
 router.use('/auth', authRouter.routes());
 router.use('/video', videoRouter.routes());
+router.use('/playlists', playlistRouter.routes());
 
 router.get('/', (ctx, next) => {
     ctx.body = 'App works!';
