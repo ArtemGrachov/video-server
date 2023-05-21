@@ -11,6 +11,14 @@ module.exports = (sequelize, DataTypes) => {
                     onDelete: 'CASCADE',
                 },
             );
+            Comment.belongsTo(
+                models.User,
+                {
+                    as: 'author',
+                    foreignKey: 'authorId',
+                    onDelete: 'CASCADE',
+                },
+            );
             Comment.hasMany(
                 models.Like,
                 {
@@ -24,11 +32,12 @@ module.exports = (sequelize, DataTypes) => {
         }
 
         serialize() {
-            const { id, content } = this;
+            const { id, content, author } = this;
 
             return {
                 id,
-                content
+                content,
+                author: author?.serialize()
             };
         }
     }
@@ -36,7 +45,8 @@ module.exports = (sequelize, DataTypes) => {
     Comment.init(
         {
             content: DataTypes.STRING,
-            referenceId: DataTypes.INTEGER
+            referenceId: DataTypes.INTEGER,
+            authorId: DataTypes.INTEGER
         },
         {
             sequelize,

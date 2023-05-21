@@ -11,5 +11,6 @@ videoRouter.get('/:id', videoController.getVideo);
 videoRouter.delete('/:id', authMiddleware, videoAuthorMiddleware, videoController.deleteVideo);
 videoRouter.patch('/:id', authMiddleware, videoAuthorMiddleware, videoController.updateVideo);
 videoRouter.post('/:id/comments', authMiddleware, videoController.videoCreateComment);
+videoRouter.get('/:id/comments', videoController.videoGetComments);
 
 module.exports = videoRouter;

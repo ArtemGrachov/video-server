@@ -186,9 +186,50 @@ module.exports = {
         }
 
         const comment = await video.createComment({
-            content
+            content,
+            authorId: ctx.user.id
         });
 
         ctx.body = comment.serialize();
+    },
+
+    async videoGetComments(ctx) {
+        const videoId = ctx.params.id;
+        const video = await Video.findByPk(videoId, { include: 'media' });
+
+        if (!video) {
+            throw errorFactory(404, ERRORS.NOT_FOUND);
+        }
+
+        let { page, perPage } = ctx.query;
+        page = page ?? 1;
+        perPage = perPage ?? VIDEO_PER_PAGE;
+
+        const limit = page * perPage;
+        const offset = (page - 1) * perPage;
+
+        const [count, rows] = await Promise.all([
+            video.countComments(),
+            video.getComments({
+                limit,
+                offset,
+                include: [
+                    {
+                        model: User,
+                        as: 'author',
+                        include: 'avatar'
+                    }
+                ]
+            })
+        ])
+
+        ctx.body = {
+            pagination: {
+                page,
+                perPage,
+                total: count,
+            },
+            data: rows.map(v => v.serialize())
+        };
     }
 };
