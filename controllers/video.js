@@ -1,4 +1,5 @@
 const ERRORS = require('../constants/errors');
+const { COMMENTS_PER_PAGE } = require('../constants/comments');
 const { MEDIA_TYPES } = require('../constants/media');
 const { VALIDATION_RULES } = require('../constants/validation');
 const { VIDEO_PER_PAGE } = require('../constants/video');
@@ -203,7 +204,7 @@ module.exports = {
 
         let { page, perPage } = ctx.query;
         page = page ?? 1;
-        perPage = perPage ?? VIDEO_PER_PAGE;
+        perPage = perPage ?? COMMENTS_PER_PAGE;
 
         const limit = page * perPage;
         const offset = (page - 1) * perPage;
