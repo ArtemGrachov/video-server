@@ -13,9 +13,9 @@ const { Video, User } = database.sequelize.models;
 module.exports = {
     async createVideo(ctx) {
         const { body, files } = ctx.request;
-        const name = body.name ?? '';
-        const description = body.description ?? '';
-        const fileVideo = files.video ?? null;
+        const name = body?.name ?? '';
+        const description = body?.description ?? '';
+        const fileVideo = files?.video ?? null;
 
         const validation = { name: [], description: [] };
 
@@ -92,21 +92,73 @@ module.exports = {
     async deleteVideo(ctx) {
         const videoId = ctx.params.id;
 
-        const video = await Video.findByPk(
-            videoId,
-            { include: 'author' }
-        );
-
-        if (!video) {
-            throw errorFactory(404, ERRORS.NOT_FOUND);
-        }
-
-        if (video.author.id !== ctx.user?.id) {
-            throw errorFactory(403, ERRORS.NOT_ALLOWED);
-        }
+        const video = await Video.findByPk(videoId);
 
         await video.destroy();
 
         ctx.body = { success: true };
+    },
+
+    async updateVideo(ctx) {
+        const { body, files } = ctx.request;
+
+        const name = body?.name;
+        const description = body?.description;
+        const fileVideo = files?.video ?? null;
+
+        const validation = { name: [], description: [] };
+
+        if (name != null && !name.trim()) {
+            validation.name.push({ rule: VALIDATION_RULES.REQUIRED });
+        }
+
+        if (Object.keys(validation).some(k => validation[k].length)) {
+            throw errorFactory(400, ERRORS.VALIDATION, validation);
+        }
+
+        const videoId = ctx.params.id;
+        const video = await Video.findByPk(videoId);
+
+        if (name != null) {
+            video.name = name;
+        }
+
+        if (description != null) {
+            video.description = description;
+        }
+
+        if (fileVideo != null) {
+            const cloudVideo = await upload(fileVideo.newFilename, 'video');
+
+            removeLocalFile(fileVideo.newFilename);
+
+            const oldMedia = await video.getMedia();
+
+            if (oldMedia) {
+                await oldMedia.destroy();
+            }
+
+            await video.createMedia({
+                externalId: cloudVideo.public_id,
+                type: MEDIA_TYPES.VIDEO
+            });
+        }
+
+        await video.save();
+
+        const videoUpdated = await Video.findByPk(
+            videoId,
+            {
+                include: [
+                    'media',
+                    {
+                        model: User,
+                        as: 'author',include: 'avatar'
+                    }
+                ]
+            }
+        );
+
+        ctx.body = videoUpdated.serialize();
     }
 };
