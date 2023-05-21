@@ -15,7 +15,7 @@ module.exports = (sequelize, DataTypes) => {
                 models.Video,
                 {
                     through: 'PlaylistVideos',
-                    as: 'playlists',
+                    as: 'playlistVideos',
                     foreignKey: 'playlistId',
                 },
             );

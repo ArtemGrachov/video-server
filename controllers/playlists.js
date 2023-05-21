@@ -7,7 +7,7 @@ const database = require('../models');
 
 const { errorFactory } = require('../utils/error-factory');
 
-const { Playlist, User } = database.sequelize.models;
+const { Playlist, User, Video } = database.sequelize.models;
 
 module.exports = {
     async createPlaylist(ctx) {
@@ -148,5 +148,35 @@ module.exports = {
         );
 
         ctx.body = playlistUpdated.serialize();
+    },
+
+    async addVideosToPlaylist(ctx) {
+        const { body } = ctx.request;
+        const videoIds = body?.videoIds ?? [];
+
+        const validation = { videoIds: [] };
+
+        if (!videoIds.length) {
+            validation.videoIds.push({ rule: VALIDATION_RULES.MIN_LENGTH, minLength: 1 });
+        }
+
+        if (Object.keys(validation).some(k => validation[k].length)) {
+            throw errorFactory(400, ERRORS.VALIDATION, validation);
+        }
+
+        const playlistId = ctx.params.id;
+        const playlist = await Playlist.findByPk(playlistId);
+
+        const videos = await Video.findAll({
+            where: {
+                id: {
+                    [Op.in]: videoIds
+                }
+            }
+        });
+
+        await playlist.addPlaylistVideos(videos);
+
+        ctx.body = { test: true };
     }
 }
