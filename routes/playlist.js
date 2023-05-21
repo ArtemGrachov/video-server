@@ -11,5 +11,6 @@ playlistRouter.get('/:id', authMiddleware, playlistController.getPlaylist);
 playlistRouter.delete('/:id', authMiddleware, playlistAuthorMiddleware, playlistController.deletePlaylist);
 playlistRouter.patch('/:id', authMiddleware, playlistAuthorMiddleware, playlistController.updatePlaylist);
 playlistRouter.post('/:id/video', authMiddleware, playlistAuthorMiddleware, playlistController.addVideosToPlaylist);
+playlistRouter.delete('/:id/video/:videoId', authMiddleware, playlistAuthorMiddleware, playlistController.removeVideoFromPlaylist);
 
 module.exports = playlistRouter;

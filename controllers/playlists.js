@@ -177,6 +177,22 @@ module.exports = {
 
         await playlist.addPlaylistVideos(videos);
 
-        ctx.body = { test: true };
+        ctx.body = { success: true };
+    },
+
+    async removeVideoFromPlaylist(ctx) {
+        const { id: playlistId, videoId } = ctx.params;
+        const [playlist, video] = await Promise.all([
+            Playlist.findByPk(playlistId),
+            Video.findByPk(videoId)
+        ]);
+
+        if (!playlist || !video) {
+            throw errorFactory(404, ERRORS.NOT_FOUND);
+        }
+
+        await playlist.removePlaylistVideo(video);
+
+        ctx.body = { success: true };
     }
 }
