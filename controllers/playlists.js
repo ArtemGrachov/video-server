@@ -94,4 +94,14 @@ module.exports = {
             data: rows.map(p => p.serialize())
         };
     },
+
+    async deletePlaylist(ctx) {
+        const playlistId = ctx.params.id;
+
+        const playlist = await Playlist.findByPk(playlistId);
+
+        await playlist.destroy();
+
+        ctx.body = { success: true };
+    }
 }
