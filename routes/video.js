@@ -7,5 +7,6 @@ const videoRouter = new KoaRouter();
 videoRouter.post('/', authMiddleware, videoController.createVideo);
 videoRouter.get('/', videoController.getVideos);
 videoRouter.get('/:id', videoController.getVideo);
+videoRouter.delete('/:id', authMiddleware, videoController.deleteVideo);
 
 module.exports = videoRouter;

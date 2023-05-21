@@ -85,5 +85,26 @@ module.exports = {
             },
             data: rows.map(v => v.serialize())
         };
+    },
+
+    async deleteVideo(ctx) {
+        const videoId = ctx.params.id;
+
+        const video = await Video.findByPk(
+            videoId,
+            { include: 'author' }
+        );
+
+        if (!video) {
+            throw errorFactory(404, ERRORS.NOT_FOUND);
+        }
+
+        if (video.author.id !== ctx.user?.id) {
+            throw errorFactory(403, ERRORS.NOT_ALLOWED);
+        }
+
+        await video.destroy();
+
+        ctx.body = { success: true };
     }
 };

@@ -4,7 +4,6 @@ const jwt = require('jsonwebtoken');
 const mail = require('../mail');
 
 const { VALIDATION_RULES } = require('../constants/validation');
-const SUCCESS = require('../constants/success');
 const ERRORS = require('../constants/errors');
 
 const database = require('../models');
@@ -158,9 +157,7 @@ module.exports = {
         await mail.sendMail(mailOptions);
 
         ctx.status = 200;
-        ctx.body = {
-            message: SUCCESS.RESET_PASSWORD_TOKEN_GENERATED_SUCCESSFULLY
-        };
+        ctx.body = { success: true };
     },
 
     async resetPassword(ctx) {
@@ -207,9 +204,7 @@ module.exports = {
         await user.save();
 
         ctx.status = 200;
-        ctx.body = {
-            message: SUCCESS.PASWORD_UPDATED_SUCCESSFULLY
-        };
+        ctx.body = { success: true };
     },
 
     async changePassword(ctx) {
@@ -241,8 +236,6 @@ module.exports = {
         await user.save();
 
         ctx.status = 200;
-        ctx.body = {
-            message: SUCCESS.PASWORD_UPDATED_SUCCESSFULLY
-        };
+        ctx.body = { success: true };
     }
 };

@@ -64,6 +64,12 @@ module.exports = (sequelize, DataTypes) => {
         {
             sequelize,
             modelName: 'Video',
+            hooks: {
+                async afterDestroy(video) {
+                    const media = await video.getMedia();
+                    await media.destroy();
+                }
+            }
         }
     );
 

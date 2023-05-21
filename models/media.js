@@ -10,7 +10,8 @@ module.exports = (sequelize, DataTypes) => {
                 {
                     foreignKey: 'referenceId',
                     constraints: false,
-                    as: 'media'
+                    as: 'media',
+                    onDelete: 'CASCADE'
                 }
             );
             Media.belongsTo(
