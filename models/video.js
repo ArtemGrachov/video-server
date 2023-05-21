@@ -16,6 +16,7 @@ module.exports = (sequelize, DataTypes) => {
             Video.belongsTo(
                 models.User,
                 {
+                    as: 'author',
                     foreignKey: 'authorId',
                     onDelete: 'CASCADE'
                 }
@@ -40,15 +41,16 @@ module.exports = (sequelize, DataTypes) => {
             );
         }
 
-        async serialize() {
-            const { id, name, description, authorId, media } = this;
+        serialize() {
+            const { id, name, description, author, media, createdAt } = this;
 
             return {
                 id,
                 name,
                 description,
-                authorId,
-                media: media?.serialize()
+                author: author?.serialize(),
+                media: media?.serialize(),
+                createdAt
             };
         }
     }

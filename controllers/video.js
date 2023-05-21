@@ -1,12 +1,13 @@
 const ERRORS = require('../constants/errors');
 const { VALIDATION_RULES } = require('../constants/validation');
+const { VIDEO_PER_PAGE } = require('../constants/video');
 
 const database = require('../models');
 
 const { errorFactory } = require('../utils/error-factory');
 const { upload, removeLocalFile } = require('../utils/upload');
 
-const { Video, Media } = database.sequelize.models;
+const { Video, User } = database.sequelize.models;
 
 module.exports = {
     async createVideo(ctx) {
@@ -54,5 +55,35 @@ module.exports = {
         }
 
         ctx.body = await video.serialize();
+    },
+
+    async getVideos(ctx) {
+        let { page, perPage } = ctx.query;
+        page = page ?? 1;
+        perPage = perPage ?? VIDEO_PER_PAGE;
+
+        const limit = page * perPage;
+        const offset = (page - 1) * perPage;
+
+        const { count, rows } = await Video.findAndCountAll({
+            limit,
+            offset,
+            include: [
+                'media',
+                {
+                    model: User,
+                    as: 'author',include: 'avatar'
+                }
+            ]
+        });
+
+        ctx.body = {
+            pagination: {
+                page,
+                perPage,
+                total: count,
+            },
+            data: rows.map(v => v.serialize())
+        };
     }
 };
