@@ -3,7 +3,7 @@
 /** @type {import('sequelize-cli').Migration} */
 module.exports = {
   async up (queryInterface, Sequelize) {
-    queryInterface.changeColumn(
+    await queryInterface.changeColumn(
       'PlaylistVideos',
       'playlistId',
       {
@@ -16,7 +16,7 @@ module.exports = {
         }
       }
     );
-    queryInterface.changeColumn(
+    await queryInterface.changeColumn(
       'PlaylistVideos',
       'videoId',
       {
@@ -32,7 +32,7 @@ module.exports = {
   },
 
   async down (queryInterface, Sequelize) {
-    queryInterface.changeColumn(
+    await queryInterface.changeColumn(
       'PlaylistVideos',
       'playlistId',
       {
@@ -40,7 +40,7 @@ module.exports = {
         references: null
       }
     );
-    queryInterface.changeColumn(
+    await queryInterface.changeColumn(
       'PlaylistVideos',
       'videoId',
       {

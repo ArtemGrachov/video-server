@@ -3,7 +3,7 @@
 /** @type {import('sequelize-cli').Migration} */
 module.exports = {
   async up (queryInterface, Sequelize) {
-    queryInterface.changeColumn(
+    await queryInterface.changeColumn(
       'Comments',
       'referenceId',
       {
@@ -19,7 +19,7 @@ module.exports = {
   },
 
   async down (queryInterface, Sequelize) {
-    queryInterface.changeColumn(
+    await queryInterface.changeColumn(
       'Comments',
       'referenceId',
       {

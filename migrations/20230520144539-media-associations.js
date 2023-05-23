@@ -1,8 +1,8 @@
 /** @type {import('sequelize-cli').Migration} */
 module.exports = {
     async up(queryInterface, Sequelize) {
-        queryInterface.removeColumn('Videos', 'videoId');
-        queryInterface.addColumn(
+        await queryInterface.removeColumn('Videos', 'videoId');
+        await queryInterface.addColumn(
             'Videos',
             'mediaId',
             {
@@ -10,14 +10,14 @@ module.exports = {
             }
         );
 
-        queryInterface.addColumn(
+        await queryInterface.addColumn(
             'Media',
             'referenceId',
             {
                 type: Sequelize.INTEGER,
             }
         );
-        queryInterface.addColumn(
+        await queryInterface.addColumn(
             'Media',
             'referenceType',
             {
@@ -26,8 +26,8 @@ module.exports = {
         );
     },
     async down(queryInterface, Sequelize) {
-        queryInterface.removeColumn('Videos', 'mediaId');
-        queryInterface.addColumn(
+        await queryInterface.removeColumn('Videos', 'mediaId');
+        await queryInterface.addColumn(
             'Videos',
             'videoId',
             {
@@ -35,8 +35,8 @@ module.exports = {
             }
         );
 
-        queryInterface.removeColumn('Media', 'referenceId');
-        queryInterface.removeColumn('Media', 'referenceType');
-        queryInterface.removeColumn('Users', 'mediaId');
+        await queryInterface.removeColumn('Media', 'referenceId');
+        await queryInterface.removeColumn('Media', 'referenceType');
+        await queryInterface.removeColumn('Users', 'mediaId');
     }
 };

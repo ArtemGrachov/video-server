@@ -1,7 +1,7 @@
 /** @type {import('sequelize-cli').Migration} */
 module.exports = {
     async up(queryInterface, Sequelize) {
-        queryInterface.addColumn(
+        await queryInterface.addColumn(
             'Media',
             'type',
             {
@@ -12,6 +12,6 @@ module.exports = {
     },
 
     async down(queryInterface, Sequelize) {
-        queryInterface.removeColumn('Media', 'type');
+        await queryInterface.removeColumn('Media', 'type');
     }
 };

@@ -1,7 +1,7 @@
 /** @type {import('sequelize-cli').Migration} */
 module.exports = {
     async up(queryInterface, Sequelize) {
-        queryInterface.changeColumn(
+        await queryInterface.changeColumn(
             'Media',
             'externalId',
             {
@@ -11,7 +11,7 @@ module.exports = {
     },
 
     async down(queryInterface, Sequelize) {
-        queryInterface.changeColumn(
+        await queryInterface.changeColumn(
             'Media',
             'externalId',
             {
