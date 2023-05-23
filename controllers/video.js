@@ -244,8 +244,14 @@ module.exports = {
             throw errorFactory(404, ERRORS.NOT_FOUND);
         }
 
-        await video.createLike({ authorId: ctx.user.id });
+        try {
+            await video.createLike({ authorId: ctx.user.id });
+        } catch (error) {
+            if (error.name !== 'SequelizeUniqueConstraintError') {
+                throw error;
+            }
+        }
 
-        ctx.body = { count: 1 };
+        ctx.body = { success: true };
     }
 };
