@@ -19,7 +19,8 @@ module.exports = (sequelize, DataTypes) => {
                 {
                     foreignKey: 'referenceId',
                     constraints: false,
-                    as: 'avatar'
+                    as: 'avatar',
+                    onDelete: 'CASCADE'
                 }
             );
         }
