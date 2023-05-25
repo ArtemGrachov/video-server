@@ -245,7 +245,23 @@ module.exports = {
         }
 
         await video.addLike(ctx.user);
+        const count = await video.countLikes();
 
-        ctx.body = { success: true };
+        ctx.body = { count };
+    },
+
+    async removeLikeVideo(ctx) {
+        const videoId = ctx.params.id;
+
+        const video = await Video.findByPk(videoId, { include: 'media' });
+
+        if (!video) {
+            throw errorFactory(404, ERRORS.NOT_FOUND);
+        }
+
+        await video.removeLike(ctx.user);
+        const count = await video.countLikes();
+
+        ctx.body = { count };
     }
 };

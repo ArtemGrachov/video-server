@@ -13,5 +13,6 @@ videoRouter.patch('/:id', authMiddleware, videoAuthorMiddleware, videoController
 videoRouter.post('/:id/comments', authMiddleware, videoController.videoCreateComment);
 videoRouter.get('/:id/comments', videoController.videoGetComments);
 videoRouter.post('/:id/like', authMiddleware, videoController.likeVideo);
+videoRouter.delete('/:id/like', authMiddleware, videoController.removeLikeVideo);
 
 module.exports = videoRouter;
