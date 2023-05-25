@@ -15,6 +15,14 @@ module.exports = (sequelize, DataTypes) => {
                 }
             );
             User.hasMany(models.Video, { foreignKey: 'authorId' });
+            User.belongsToMany(
+                models.Video,
+                {
+                    through: 'VideoLikes',
+                    as: 'videoLikes',
+                    foreignKey: 'userId',
+                },
+            );
         }
 
         getAuthTokens() {

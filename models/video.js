@@ -36,6 +36,14 @@ module.exports = (sequelize, DataTypes) => {
                     foreignKey: 'videoId',
                 },
             );
+            Video.belongsToMany(
+                models.User,
+                {
+                    through: 'VideoLikes',
+                    as: 'likes',
+                    foreignKey: 'videoId',
+                },
+            );
         }
 
         serialize() {

@@ -234,4 +234,18 @@ module.exports = {
             data: rows.map(v => v.serialize())
         };
     },
+
+    async likeVideo(ctx) {
+        const videoId = ctx.params.id;
+
+        const video = await Video.findByPk(videoId, { include: 'media' });
+
+        if (!video) {
+            throw errorFactory(404, ERRORS.NOT_FOUND);
+        }
+
+        await video.addLike(ctx.user);
+
+        ctx.body = { success: true };
+    }
 };
