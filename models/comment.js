@@ -19,16 +19,6 @@ module.exports = (sequelize, DataTypes) => {
                     onDelete: 'CASCADE',
                 },
             );
-            Comment.hasMany(
-                models.Like,
-                {
-                    foreignKey: 'referenceId',
-                    constraints: false,
-                    scope: {
-                        referenceType: 'comment',
-                    },
-                },
-            );
         }
 
         serialize() {

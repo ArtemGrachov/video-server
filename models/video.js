@@ -22,16 +22,6 @@ module.exports = (sequelize, DataTypes) => {
                 }
             );
             Video.hasMany(
-                models.Like,
-                {
-                    foreignKey: 'referenceId',
-                    constraints: false,
-                    scope: {
-                        referenceType: 'video',
-                    },
-                },
-            );
-            Video.hasMany(
                 models.Comment,
                 {
                     foreignKey: 'referenceId',
