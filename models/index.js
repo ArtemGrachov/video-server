@@ -9,6 +9,9 @@ const Video = require('./video');
 const Comment = require('./comment');
 const Playlist = require('./playlist');
 const PlaylistVideo = require('./playlistvideo');
+const CommentLikes = require('./commentlikes');
+const VideoLikes = require('./videolikes');
+const Subscription = require('./subscription');
 
 const db = {};
 
@@ -25,7 +28,17 @@ const sequelize = new Sequelize(
   },
 );
 
-const models = [User, Media, Video, Comment, Playlist, PlaylistVideo];
+const models = [
+  User,
+  Media,
+  Video,
+  Comment,
+  Playlist,
+  PlaylistVideo,
+  CommentLikes,
+  VideoLikes,
+  Subscription,
+];
 
 models.forEach(m => {
   const model = m(sequelize, Sequelize.DataTypes);

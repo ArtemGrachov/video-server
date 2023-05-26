@@ -31,6 +31,22 @@ module.exports = (sequelize, DataTypes) => {
                     foreignKey: 'userId',
                 },
             );
+            User.belongsToMany(
+                models.User,
+                {
+                    through: 'Subscriptions',
+                    as: 'subscriber',
+                    foreignKey: 'subscriberId',
+                }
+            );
+            User.belongsToMany(
+                models.User,
+                {
+                    through: 'Subscriptions',
+                    as: 'subscription',
+                    foreignKey: 'subscriptionId',
+                }
+            );
         }
 
         getAuthTokens() {
