@@ -118,7 +118,7 @@ module.exports = {
     async getSubscriptions(ctx) {
         const { userId } = ctx.params;
 
-        const user = userId == ctx.user?.id ? ctx.user : await User.findByPk(userId, { include: 'avatar' });
+        const user = userId == ctx.user?.id ? ctx.user : await User.findByPk(userId);
 
         if (!user) {
             throw errorFactory(404, ERRORS.NOT_FOUND);
@@ -139,7 +139,43 @@ module.exports = {
             }),
         ]);
 
-        const data = await Promise.all(rows.map(u => u.serialize(ctx.user)));
+        const data = await Promise.all(rows.map(u => u.serializeMin(ctx.user)));
+
+        ctx.body = {
+            pagination: {
+                page,
+                perPage,
+                total: count,
+            },
+            data,
+        };
+    },
+
+    async getSubscribers(ctx) {
+        const { userId } = ctx.params;
+
+        const user = userId == ctx.user?.id ? ctx.user : await User.findByPk(userId);
+
+        if (!user) {
+            throw errorFactory(404, ERRORS.NOT_FOUND);
+        }
+
+        let { page, perPage } = ctx.query;
+        page = page ?? 1;
+        perPage = perPage ?? USERS_PER_PAGE;
+
+        const limit = page * perPage;
+        const offset = (page - 1) * perPage;
+
+        const [count, rows] = await Promise.all([
+            user.countSubscriber(),
+            user.getSubscriber({
+                limit,
+                offset,
+            }),
+        ]);
+
+        const data = await Promise.all(rows.map(u => u.serializeMin(ctx.user)));
 
         ctx.body = {
             pagination: {

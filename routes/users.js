@@ -9,5 +9,6 @@ userRouter.get('/:userId', userController.getUser);
 userRouter.post('/:userId/subscription', authMiddleware, userController.subscribe);
 userRouter.delete('/:userId/subscription', authMiddleware, userController.unsubscribe);
 userRouter.get('/:userId/subscriptions', userController.getSubscriptions);
+userRouter.get('/:userId/subscribers', userController.getSubscribers);
 
 module.exports = userRouter;
