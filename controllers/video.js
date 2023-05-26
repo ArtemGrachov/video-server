@@ -1,3 +1,5 @@
+const { Op } = require('sequelize');
+
 const ERRORS = require('../constants/errors');
 const { COMMENTS_PER_PAGE } = require('../constants/comments');
 const { MEDIA_TYPES } = require('../constants/media');
@@ -8,7 +10,6 @@ const database = require('../models');
 
 const { errorFactory } = require('../utils/error-factory');
 const { upload, removeLocalFile } = require('../utils/upload');
-const { Op } = require('sequelize');
 
 const { Video, User } = database.sequelize.models;
 
@@ -72,15 +73,23 @@ module.exports = {
         const { count, rows } = await Video.findAndCountAll({
             limit,
             offset,
-            include: [
-                'media',
-                {
-                    model: User,
-                    as: 'author',
-                    include: 'avatar'
-                }
-            ]
         });
+
+        const authorIds = Array.from(new Set(rows.map(p => p.authorId)));
+
+        const authors = await User.findAll({
+            where: {
+                id: {
+                    [Op.in]: authorIds
+                }
+            },
+            include: 'avatar',
+        });
+
+        const [data, users] = await Promise.all([
+            Promise.all(rows.map(u => u.serialize(ctx.user))),
+            Promise.all(authors.map(u => u.serialize(ctx.user)))
+        ]);
 
         ctx.body = {
             pagination: {
@@ -88,7 +97,8 @@ module.exports = {
                 perPage,
                 total: count,
             },
-            data: rows.map(v => v.serialize())
+            data,
+            users,
         };
     },
 
@@ -149,19 +159,7 @@ module.exports = {
 
         await video.save();
 
-        const videoUpdated = await Video.findByPk(
-            videoId,
-            {
-                include: [
-                    'media',
-                    {
-                        model: User,
-                        as: 'author',
-                        include: 'avatar'
-                    }
-                ]
-            }
-        );
+        const videoUpdated = await Video.findByPk(videoId);
 
         ctx.body = videoUpdated.serialize();
     },
@@ -181,7 +179,7 @@ module.exports = {
             throw errorFactory(400, ERRORS.VALIDATION, validation);
         }
 
-        const video = await Video.findByPk(videoId, { include: 'media' });
+        const video = await Video.findByPk(videoId);
 
         if (!video) {
             throw errorFactory(404, ERRORS.NOT_FOUND);
@@ -192,12 +190,12 @@ module.exports = {
             authorId: ctx.user.id
         });
 
-        ctx.body = comment.serialize();
+        ctx.body = await comment.serialize();
     },
 
     async videoGetComments(ctx) {
         const videoId = ctx.params.id;
-        const video = await Video.findByPk(videoId, { include: 'media' });
+        const video = await Video.findByPk(videoId);
 
         if (!video) {
             throw errorFactory(404, ERRORS.NOT_FOUND);
@@ -215,15 +213,24 @@ module.exports = {
             video.getComments({
                 limit,
                 offset,
-                include: [
-                    {
-                        model: User,
-                        as: 'author',
-                        include: 'avatar'
-                    }
-                ]
-            })
-        ])
+            }),
+        ]);
+
+        const authorIds = Array.from(new Set(rows.map(c => c.authorId)));
+
+        const authors = await User.findAll({
+            where: {
+                id: {
+                    [Op.in]: authorIds
+                }
+            },
+            include: 'avatar',
+        });
+
+        const [data, users] = await Promise.all([
+            Promise.all(rows.map(c => c.serialize(ctx.user))),
+            Promise.all(authors.map(u => u.serialize(ctx.user)))
+        ]);
 
         ctx.body = {
             pagination: {
@@ -231,14 +238,15 @@ module.exports = {
                 perPage,
                 total: count,
             },
-            data: rows.map(v => v.serialize())
+            data,
+            users,
         };
     },
 
     async likeVideo(ctx) {
         const videoId = ctx.params.id;
 
-        const video = await Video.findByPk(videoId, { include: 'media' });
+        const video = await Video.findByPk(videoId);
 
         if (!video) {
             throw errorFactory(404, ERRORS.NOT_FOUND);
@@ -253,7 +261,7 @@ module.exports = {
     async removeLikeVideo(ctx) {
         const videoId = ctx.params.id;
 
-        const video = await Video.findByPk(videoId, { include: 'media' });
+        const video = await Video.findByPk(videoId);
 
         if (!video) {
             throw errorFactory(404, ERRORS.NOT_FOUND);

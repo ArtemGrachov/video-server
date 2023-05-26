@@ -77,15 +77,24 @@ module.exports = {
         const { count, rows } = await Playlist.findAndCountAll({
             where,
             limit,
-            offset,
-            include: [
-                {
-                    model: User,
-                    as: 'author',
-                    include: 'avatar'
-                }
-            ]
+            offset
         });
+
+        const authorIds = Array.from(new Set(rows.map(p => p.authorId)));
+
+        const authors = await User.findAll({
+            where: {
+                id: {
+                    [Op.in]: authorIds
+                }
+            },
+            include: 'avatar',
+        });
+
+        const [data, users] = await Promise.all([
+            Promise.all(rows.map(p => p.serialize(ctx.user))),
+            Promise.all(authors.map(u => u.serialize(ctx.user)))
+        ]);
 
         ctx.body = {
             pagination: {
@@ -93,7 +102,8 @@ module.exports = {
                 perPage,
                 total: count,
             },
-            data: rows.map(p => p.serialize())
+            data,
+            users
         };
     },
 
@@ -136,18 +146,7 @@ module.exports = {
 
         await playlist.save();
 
-        const playlistUpdated = await Playlist.findByPk(
-            playlistId,
-            {
-                include: [
-                    {
-                        model: User,
-                        as: 'author',
-                        include: 'avatar'
-                    }
-                ]
-            }
-        );
+        const playlistUpdated = await Playlist.findByPk(playlistId);
 
         ctx.body = playlistUpdated.serialize();
     },
@@ -217,17 +216,25 @@ module.exports = {
             playlist.countPlaylistVideos(),
             playlist.getPlaylistVideos({
                 limit,
-                offset,
-                include: [
-                    'media',
-                    {
-                        model: User,
-                        as: 'author',
-                        include: 'avatar'
-                    }
-                ]
+                offset
             })
-        ])
+        ]);
+
+        const authorIds = Array.from(new Set(rows.map(p => p.authorId)));
+
+        const authors = await User.findAll({
+            where: {
+                id: {
+                    [Op.in]: authorIds
+                }
+            },
+            include: 'avatar',
+        });
+
+        const [data, users] = await Promise.all([
+            Promise.all(rows.map(v => v.serialize(ctx.user))),
+            Promise.all(authors.map(u => u.serialize(ctx.user)))
+        ]);
 
         ctx.body = {
             pagination: {
@@ -235,7 +242,8 @@ module.exports = {
                 perPage,
                 total: count,
             },
-            data: rows.map(v => v.serialize())
+            data,
+            users,
         };
     }
 }

@@ -42,18 +42,7 @@ module.exports = {
 
         await comment.save();
 
-        const commentUpdated = await Comment.findByPk(
-            commentId,
-            {
-                include: [
-                    {
-                        model: User,
-                        as: 'author',
-                        include: 'avatar'
-                    }
-                ]
-            }
-        );
+        const commentUpdated = await Comment.findByPk(commentId);
 
         ctx.body = commentUpdated.serialize();
     },

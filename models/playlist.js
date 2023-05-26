@@ -21,14 +21,15 @@ module.exports = (sequelize, DataTypes) => {
             );
         }
 
-        serialize() {
-            const { id, name, description, author } = this;
+        async serialize(user) {
+            const { id, name, description, authorId, author } = this;
 
             return {
                 id,
                 name,
                 description,
-                author: author?.serialize()
+                authorId,
+                author: await author?.serialize(),
             };
         }
     }

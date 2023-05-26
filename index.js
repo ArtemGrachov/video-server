@@ -14,6 +14,7 @@ const authRouter = require('./routes/auth');
 const videoRouter = require('./routes/video');
 const playlistRouter = require('./routes/playlist');
 const commentRouter = require('./routes/comment');
+const userMiddleware = require('./middlewares/user');
 const errorMiddleware = require('./middlewares/error');
 
 const app = new Koa();
@@ -25,6 +26,7 @@ router.use(koaBody({
         uploadDir: path.resolve(__dirname, 'uploads')
     }
 }));
+router.use(userMiddleware);
 router.use(errorMiddleware);
 
 router.use('/auth', authRouter.routes());

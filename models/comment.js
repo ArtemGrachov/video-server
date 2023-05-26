@@ -29,13 +29,14 @@ module.exports = (sequelize, DataTypes) => {
             );
         }
 
-        serialize() {
-            const { id, content, author } = this;
+        serialize(user) {
+            const { id, content, author, authorId } = this;
 
             return {
                 id,
                 content,
-                author: author?.serialize()
+                authorId,
+                author: author?.serialize(),
             };
         }
     }

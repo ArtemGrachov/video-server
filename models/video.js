@@ -46,16 +46,24 @@ module.exports = (sequelize, DataTypes) => {
             );
         }
 
-        serialize() {
-            const { id, name, description, author, media, createdAt } = this;
+        async serialize(user) {
+            const { id, name, description, authorId, author, media, createdAt } = this;
+
+            const [isLiked, likesCount] = await Promise.all([
+                (user ? this.hasLike(user) : false),
+                this.countLikes(),
+            ]);
 
             return {
                 id,
                 name,
                 description,
-                author: author?.serialize(),
-                media: media?.serialize(),
-                createdAt
+                authorId,
+                author: await author?.serialize(),
+                media: await media?.serialize(),
+                createdAt,
+                isLiked,
+                likesCount,
             };
         }
     }
