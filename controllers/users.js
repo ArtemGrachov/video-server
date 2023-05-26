@@ -64,5 +64,17 @@ module.exports = {
         const updatedUser = await User.findByPk(user.id, { include: 'avatar' });
 
         ctx.body = await updatedUser.serialize(ctx.user);
+    },
+
+    async getUser(ctx) {
+        const { userId } = ctx.params;
+
+        const user = await User.findByPk(userId, { include: 'avatar' });
+
+        if (!user) {
+            throw errorFactory(404, ERRORS.NOT_FOUND);
+        }
+
+        ctx.body = await user.serialize(ctx.user);
     }
 }
