@@ -1,4 +1,4 @@
-const { Op } = require('sequelize');
+const { Op, Sequelize } = require('sequelize');
 
 const ERRORS = require('../constants/errors');
 const { PLAYLISTS_PER_PAGE } = require('../constants/playlists');
@@ -60,18 +60,39 @@ module.exports = {
     },
 
     async getPlaylists(ctx) {
-        let { page, perPage, authorId } = ctx.query;
+        let { page, perPage, userIds, search } = ctx.query;
         page = page ?? 1;
         perPage = perPage ?? PLAYLISTS_PER_PAGE;
 
         const limit = page * perPage;
         const offset = (page - 1) * perPage;
-        const where = {};
 
-        if (authorId != null) {
-            where.authorId = {
-                [Op.eq]: authorId
-            };
+        const where = [];
+
+        if (userIds) {
+            if (typeof userIds === 'object') {
+                where.push({
+                    authorId: {
+                        [Op.in]: userIds,
+                    },
+                });
+            } else {
+                where.push({
+                    authorId: {
+                        [Op.eq]: userIds,
+                    }
+                });
+            }
+        }
+
+        if (search) {
+            where.push(
+                database.Sequelize.where(
+                    Sequelize.fn('MATCH', Sequelize.col('name'), Sequelize.col('description')),
+                    '',
+                    Sequelize.fn('AGAINST', search),
+                )
+            )
         }
 
         const { count, rows } = await Playlist.findAndCountAll({

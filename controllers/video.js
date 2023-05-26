@@ -71,7 +71,7 @@ module.exports = {
         const limit = page * perPage;
         const offset = (page - 1) * perPage;
 
-        let where = [];
+        const where = [];
 
         if (ctx.user && subscriptions) {
             const subscriptions = await ctx.user.getSubscription();
