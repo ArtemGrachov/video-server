@@ -1,6 +1,7 @@
 const ERRORS = require('../constants/errors');
 const { MEDIA_TYPES } = require('../constants/media');
 const { VALIDATION_RULES } = require('../constants/validation');
+const { USERS_PER_PAGE } = require('../constants/users');
 const { errorFactory } = require('../utils/error-factory');
 const { upload, removeLocalFile } = require('../utils/upload');
 
@@ -112,5 +113,41 @@ module.exports = {
         await user.removeSubscriber(ctx.user);
 
         ctx.body = { success: true };
+    },
+
+    async getSubscriptions(ctx) {
+        const { userId } = ctx.params;
+
+        const user = userId == ctx.user?.id ? ctx.user : await User.findByPk(userId, { include: 'avatar' });
+
+        if (!user) {
+            throw errorFactory(404, ERRORS.NOT_FOUND);
+        }
+
+        let { page, perPage } = ctx.query;
+        page = page ?? 1;
+        perPage = perPage ?? USERS_PER_PAGE;
+
+        const limit = page * perPage;
+        const offset = (page - 1) * perPage;
+
+        const [count, rows] = await Promise.all([
+            user.countSubscription(),
+            user.getSubscription({
+                limit,
+                offset,
+            }),
+        ]);
+
+        const data = await Promise.all(rows.map(u => u.serialize(ctx.user)));
+
+        ctx.body = {
+            pagination: {
+                page,
+                perPage,
+                total: count,
+            },
+            data,
+        };
     }
 }

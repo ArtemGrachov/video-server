@@ -8,5 +8,6 @@ userRouter.patch('/self', authMiddleware, userController.updateUser);
 userRouter.get('/:userId', userController.getUser);
 userRouter.post('/:userId/subscription', authMiddleware, userController.subscribe);
 userRouter.delete('/:userId/subscription', authMiddleware, userController.unsubscribe);
+userRouter.get('/:userId/subscriptions', userController.getSubscriptions);
 
 module.exports = userRouter;

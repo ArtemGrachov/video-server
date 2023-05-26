@@ -75,14 +75,27 @@ module.exports = (sequelize, DataTypes) => {
             return resetPasswordToken;
         }
 
-        serialize(user) {
+        async serialize(user) {
             const { id, name, avatar, email } = this;
+
+            const isSubscription = user ? await this.hasSubscriber(user) : false;
 
             return {
                 id,
                 name,
                 avatar,
-                email: user.id === id ? email : undefined
+                email: user.id === id ? email : undefined,
+                isSubscription,
+            };
+        }
+
+        serializeMin(user) {
+            const { id, name, avatar } = this;
+
+            return {
+                id,
+                name,
+                avatar
             };
         }
     }

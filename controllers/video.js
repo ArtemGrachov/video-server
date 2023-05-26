@@ -87,8 +87,8 @@ module.exports = {
         });
 
         const [data, users] = await Promise.all([
-            Promise.all(rows.map(u => u.serialize(ctx.user))),
-            Promise.all(authors.map(u => u.serialize(ctx.user)))
+            Promise.all(rows.map(v => v.serialize(ctx.user))),
+            Promise.all(authors.map(u => u.serializeMin(ctx.user)))
         ]);
 
         ctx.body = {
@@ -229,7 +229,7 @@ module.exports = {
 
         const [data, users] = await Promise.all([
             Promise.all(rows.map(c => c.serialize(ctx.user))),
-            Promise.all(authors.map(u => u.serialize(ctx.user)))
+            Promise.all(authors.map(u => u.serializeMin(ctx.user)))
         ]);
 
         ctx.body = {
