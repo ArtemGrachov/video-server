@@ -1,4 +1,4 @@
-const { Op } = require('sequelize');
+const { Op, Sequelize } = require('sequelize');
 
 const ERRORS = require('../constants/errors');
 const { COMMENTS_PER_PAGE } = require('../constants/comments');
@@ -63,7 +63,7 @@ module.exports = {
     },
 
     async getVideos(ctx) {
-        let { page, perPage, userIds, subscriptions } = ctx.query;
+        let { page, perPage, userIds, subscriptions, search } = ctx.query;
 
         page = page ?? 1;
         perPage = perPage ?? VIDEO_PER_PAGE;
@@ -71,24 +71,40 @@ module.exports = {
         const limit = page * perPage;
         const offset = (page - 1) * perPage;
 
-        const where = {};
+        let where = [];
 
         if (ctx.user && subscriptions) {
             const subscriptions = await ctx.user.getSubscription();
 
-            where.authorId = {
-                [Op.in]: subscriptions.map(u => u.id),
-            };
+            where.push({
+                authorId: {
+                    [Op.in]: subscriptions.map(u => u.id),
+                },
+            });
         } else if (userIds) {
             if (typeof userIds === 'object') {
-                where.authorId = {
-                    [Op.in]: userIds,
-                };
+                where.push({
+                    authorId: {
+                        [Op.in]: userIds,
+                    },
+                });
             } else {
-                where.authorId = {
-                    [Op.eq]: userIds,
-                };
+                where.push({
+                    authorId: {
+                        [Op.eq]: userIds,
+                    }
+                });
             }
+        }
+
+        if (search) {
+            where.push(
+                Sequelize.where(
+                    Sequelize.fn('MATCH', Sequelize.col('name'), Sequelize.col('description')),
+                    '',
+                    Sequelize.fn('AGAINST', search),
+                )
+            )
         }
 
         const { count, rows } = await Video.findAndCountAll({
