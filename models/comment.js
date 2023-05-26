@@ -19,6 +19,14 @@ module.exports = (sequelize, DataTypes) => {
                     onDelete: 'CASCADE',
                 },
             );
+            Comment.belongsToMany(
+                models.User,
+                {
+                    through: 'CommentLikes',
+                    as: 'likes',
+                    foreignKey: 'commentId',
+                },
+            );
         }
 
         serialize() {

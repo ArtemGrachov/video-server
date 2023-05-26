@@ -56,5 +56,35 @@ module.exports = {
         );
 
         ctx.body = commentUpdated.serialize();
+    },
+
+    async likeComment(ctx) {
+        const commentId = ctx.params.id;
+
+        const comment = await Comment.findByPk(commentId);
+
+        if (!comment) {
+            throw errorFactory(404, ERRORS.NOT_FOUND);
+        }
+
+        await comment.addLike(ctx.user);
+        const count = await comment.countLikes();
+
+        ctx.body = { count };
+    },
+
+    async removeLikeComment(ctx) {
+        const commentId = ctx.params.id;
+
+        const comment = await Comment.findByPk(commentId);
+
+        if (!comment) {
+            throw errorFactory(404, ERRORS.NOT_FOUND);
+        }
+
+        await comment.removeLike(ctx.user);
+        const count = await comment.countLikes();
+
+        ctx.body = { count };
     }
 };

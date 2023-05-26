@@ -23,6 +23,14 @@ module.exports = (sequelize, DataTypes) => {
                     foreignKey: 'userId',
                 },
             );
+            User.belongsToMany(
+                models.Comment,
+                {
+                    through: 'CommentLikes',
+                    as: 'commentLikes',
+                    foreignKey: 'userId',
+                },
+            );
         }
 
         getAuthTokens() {
