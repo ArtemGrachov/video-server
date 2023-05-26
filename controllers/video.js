@@ -63,14 +63,30 @@ module.exports = {
     },
 
     async getVideos(ctx) {
-        let { page, perPage } = ctx.query;
+        let { page, perPage, userIds } = ctx.query;
+
         page = page ?? 1;
         perPage = perPage ?? VIDEO_PER_PAGE;
 
         const limit = page * perPage;
         const offset = (page - 1) * perPage;
 
+        const where = {};
+
+        if (userIds) {
+            if (typeof userIds === 'object') {
+                where.authorId = {
+                    [Op.in]: userIds,
+                };
+            } else {
+                where.authorId = {
+                    [Op.eq]: userIds,
+                };
+            }
+        }
+
         const { count, rows } = await Video.findAndCountAll({
+            where,
             limit,
             offset,
         });
