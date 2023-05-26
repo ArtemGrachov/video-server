@@ -94,5 +94,23 @@ module.exports = {
         await user.addSubscriber(ctx.user);
 
         ctx.body = { success: true };
+    },
+
+    async unsubscribe(ctx) {
+        const { userId } = ctx.params;
+
+        if (userId === ctx.user?.id) {
+            throw errorFactory(400, ERRORS.VALIDATION);
+        }
+
+        const user = await User.findByPk(userId, { include: 'avatar' });
+
+        if (!user) {
+            throw errorFactory(404, ERRORS.NOT_FOUND);
+        }
+
+        await user.removeSubscriber(ctx.user);
+
+        ctx.body = { success: true };
     }
 }
