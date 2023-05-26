@@ -59,13 +59,14 @@ module.exports = (sequelize, DataTypes) => {
             return resetPasswordToken;
         }
 
-        serialize() {
-            const { id, name, avatar } = this;
+        serialize(user) {
+            const { id, name, avatar, email } = this;
 
             return {
                 id,
                 name,
-                avatar
+                avatar,
+                email: user.id === id ? email : undefined
             };
         }
     }

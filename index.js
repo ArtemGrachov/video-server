@@ -14,6 +14,7 @@ const authRouter = require('./routes/auth');
 const videoRouter = require('./routes/video');
 const playlistRouter = require('./routes/playlist');
 const commentRouter = require('./routes/comment');
+const userRouter = require('./routes/user');
 const userMiddleware = require('./middlewares/user');
 const errorMiddleware = require('./middlewares/error');
 
@@ -33,6 +34,7 @@ router.use('/auth', authRouter.routes());
 router.use('/video', videoRouter.routes());
 router.use('/playlists', playlistRouter.routes());
 router.use('/comments', commentRouter.routes());
+router.use('/users', userRouter.routes());
 
 router.get('/', (ctx, next) => {
     ctx.body = 'App works!';
