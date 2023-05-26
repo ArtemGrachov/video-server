@@ -63,7 +63,7 @@ module.exports = {
     },
 
     async getVideos(ctx) {
-        let { page, perPage, userIds } = ctx.query;
+        let { page, perPage, userIds, subscriptions } = ctx.query;
 
         page = page ?? 1;
         perPage = perPage ?? VIDEO_PER_PAGE;
@@ -73,7 +73,13 @@ module.exports = {
 
         const where = {};
 
-        if (userIds) {
+        if (ctx.user && subscriptions) {
+            const subscriptions = await ctx.user.getSubscription();
+
+            where.authorId = {
+                [Op.in]: subscriptions.map(u => u.id),
+            };
+        } else if (userIds) {
             if (typeof userIds === 'object') {
                 where.authorId = {
                     [Op.in]: userIds,
