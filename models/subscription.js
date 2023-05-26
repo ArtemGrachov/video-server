@@ -8,7 +8,7 @@ module.exports = (sequelize, DataTypes) => {
                     models.User,
                     {
                         as: 'subscriber',
-                        foreignKey: 'subscriptionId',
+                        foreignKey: 'subscriberId',
                         onDelete: 'CASCADE',
                     },
                 );

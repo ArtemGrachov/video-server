@@ -36,7 +36,7 @@ module.exports = (sequelize, DataTypes) => {
                 {
                     through: 'Subscriptions',
                     as: 'subscriber',
-                    foreignKey: 'subscriberId',
+                    foreignKey: 'subscriptionId',
                 }
             );
             User.belongsToMany(
@@ -44,7 +44,7 @@ module.exports = (sequelize, DataTypes) => {
                 {
                     through: 'Subscriptions',
                     as: 'subscription',
-                    foreignKey: 'subscriptionId',
+                    foreignKey: 'subscriberId',
                 }
             );
         }
