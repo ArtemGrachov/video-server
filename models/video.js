@@ -82,7 +82,11 @@ module.exports = (sequelize, DataTypes) => {
                     const media = await video.getMedia();
                     await media.destroy();
                 }
-            }
+            },
+            indexes: [{
+                name: 'FULLTEXT',
+                fields: ['name', 'description']
+            }],
         }
     );
 

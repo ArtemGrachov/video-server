@@ -43,6 +43,10 @@ module.exports = (sequelize, DataTypes) => {
         {
             sequelize,
             modelName: 'Playlist',
+            indexes: [{
+                name: 'FULLTEXT',
+                fields: ['name', 'description']
+            }],
         }
     );
 
