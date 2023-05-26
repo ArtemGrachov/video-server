@@ -4,6 +4,7 @@ const authMiddleware = require('../middlewares/auth');
 
 const userRouter = new KoaRouter();
 
+userRouter.get('/', userController.getUsers);
 userRouter.patch('/self', authMiddleware, userController.updateUser);
 userRouter.get('/:userId', userController.getUser);
 userRouter.post('/:userId/subscription', authMiddleware, userController.subscribe);

@@ -87,7 +87,7 @@ module.exports = {
 
         if (search) {
             where.push(
-                database.Sequelize.where(
+                Sequelize.where(
                     Sequelize.fn('MATCH', Sequelize.col('name'), Sequelize.col('description')),
                     '',
                     Sequelize.fn('AGAINST', search),

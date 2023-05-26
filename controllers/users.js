@@ -1,3 +1,5 @@
+const { Sequelize, Op } = require('sequelize');
+
 const ERRORS = require('../constants/errors');
 const { MEDIA_TYPES } = require('../constants/media');
 const { VALIDATION_RULES } = require('../constants/validation');
@@ -176,6 +178,53 @@ module.exports = {
         ]);
 
         const data = await Promise.all(rows.map(u => u.serializeMin(ctx.user)));
+
+        ctx.body = {
+            pagination: {
+                page,
+                perPage,
+                total: count,
+            },
+            data,
+        };
+    },
+
+    async getUsers(ctx) {
+        let { page, perPage, search } = ctx.query;
+        page = page ?? 1;
+        perPage = perPage ?? USERS_PER_PAGE;
+
+        const limit = page * perPage;
+        const offset = (page - 1) * perPage;
+
+        const where = [];
+
+        if (search) {
+            where.push(
+                {
+                    [Op.or]: [
+                        Sequelize.where(
+                            Sequelize.fn('MATCH', Sequelize.col('name')),
+                            '',
+                            Sequelize.fn('AGAINST', search),
+                        ),
+                        {
+                            email: {
+                                [Op.eq]: search
+                            },
+                        },
+                    ]
+                }
+            )
+        }
+
+        const { count, rows } = await User.findAndCountAll({
+            where,
+            limit,
+            offset
+        });
+
+        const data = await Promise.all(rows.map(p => p.serialize(ctx.user)));
 
         ctx.body = {
             pagination: {
