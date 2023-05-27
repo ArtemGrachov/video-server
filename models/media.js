@@ -37,7 +37,7 @@ module.exports = (sequelize, DataTypes) => {
                     break;
                 }
                 case MEDIA_TYPES.IMAGE: {
-                    url = cloudinary.image(externalId);
+                    url = cloudinary.utils.url(externalId);
                     break;
                 }
             }

@@ -95,7 +95,7 @@ module.exports = (sequelize, DataTypes) => {
             return {
                 id,
                 name,
-                avatar
+                avatar: avatar?.serialize()
             };
         }
     }

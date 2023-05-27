@@ -111,6 +111,7 @@ module.exports = {
             where,
             limit,
             offset,
+            include: 'media',
         });
 
         const authorIds = Array.from(new Set(rows.map(p => p.authorId)));
