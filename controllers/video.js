@@ -47,7 +47,7 @@ module.exports = {
             type: MEDIA_TYPES.VIDEO
         });
 
-        ctx.body = video.serialize();
+        ctx.body = await video.serialize();
     },
 
     async getVideo(ctx) {
@@ -66,7 +66,7 @@ module.exports = {
         let { page, perPage, userIds, subscriptions, search } = ctx.query;
 
         page = page ?? 1;
-        perPage = perPage ?? VIDEO_PER_PAGE;
+        perPage = +(perPage ?? VIDEO_PER_PAGE);
 
         const limit = page * perPage;
         const offset = (page - 1) * perPage;
@@ -130,11 +130,14 @@ module.exports = {
             Promise.all(authors.map(u => u.serializeMin(ctx.user)))
         ]);
 
+        const totalPages = Math.ceil(count / perPage);
+
         ctx.body = {
             pagination: {
                 page,
                 perPage,
                 total: count,
+                totalPages,
             },
             data,
             users,
@@ -242,7 +245,7 @@ module.exports = {
 
         let { page, perPage } = ctx.query;
         page = page ?? 1;
-        perPage = perPage ?? COMMENTS_PER_PAGE;
+        perPage = +(perPage ?? COMMENTS_PER_PAGE);
 
         const limit = page * perPage;
         const offset = (page - 1) * perPage;
@@ -271,11 +274,14 @@ module.exports = {
             Promise.all(authors.map(u => u.serializeMin(ctx.user)))
         ]);
 
+        const totalPages = Math.ceil(count / perPage);
+
         ctx.body = {
             pagination: {
                 page,
                 perPage,
                 total: count,
+                totalPages,
             },
             data,
             users,

@@ -128,7 +128,7 @@ module.exports = {
 
         let { page, perPage } = ctx.query;
         page = page ?? 1;
-        perPage = perPage ?? USERS_PER_PAGE;
+        perPage = +(perPage ?? USERS_PER_PAGE);
 
         const limit = page * perPage;
         const offset = (page - 1) * perPage;
@@ -142,12 +142,14 @@ module.exports = {
         ]);
 
         const data = await Promise.all(rows.map(u => u.serializeMin(ctx.user)));
+        const totalPages = Math.ceil(count / perPage);
 
         ctx.body = {
             pagination: {
                 page,
                 perPage,
                 total: count,
+                totalPages,
             },
             data,
         };
@@ -164,7 +166,7 @@ module.exports = {
 
         let { page, perPage } = ctx.query;
         page = page ?? 1;
-        perPage = perPage ?? USERS_PER_PAGE;
+        perPage = +(perPage ?? USERS_PER_PAGE);
 
         const limit = page * perPage;
         const offset = (page - 1) * perPage;
@@ -178,12 +180,14 @@ module.exports = {
         ]);
 
         const data = await Promise.all(rows.map(u => u.serializeMin(ctx.user)));
+        const totalPages = Math.ceil(count / perPage);
 
         ctx.body = {
             pagination: {
                 page,
                 perPage,
                 total: count,
+                totalPages,
             },
             data,
         };
@@ -192,7 +196,7 @@ module.exports = {
     async getUsers(ctx) {
         let { page, perPage, search } = ctx.query;
         page = page ?? 1;
-        perPage = perPage ?? USERS_PER_PAGE;
+        perPage = +(perPage ?? USERS_PER_PAGE);
 
         const limit = page * perPage;
         const offset = (page - 1) * perPage;
@@ -225,12 +229,14 @@ module.exports = {
         });
 
         const data = await Promise.all(rows.map(p => p.serialize(ctx.user)));
+        const totalPages = Math.ceil(count / perPage);
 
         ctx.body = {
             pagination: {
                 page,
                 perPage,
                 total: count,
+                totalPages,
             },
             data,
         };

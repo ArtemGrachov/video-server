@@ -62,7 +62,7 @@ module.exports = {
     async getPlaylists(ctx) {
         let { page, perPage, userIds, search } = ctx.query;
         page = page ?? 1;
-        perPage = perPage ?? PLAYLISTS_PER_PAGE;
+        perPage = +(perPage ?? PLAYLISTS_PER_PAGE);
 
         const limit = page * perPage;
         const offset = (page - 1) * perPage;
@@ -116,12 +116,14 @@ module.exports = {
             Promise.all(rows.map(p => p.serialize(ctx.user))),
             Promise.all(authors.map(u => u.serializeMin(ctx.user)))
         ]);
+        const totalPages = Math.ceil(count / perPage);
 
         ctx.body = {
             pagination: {
                 page,
                 perPage,
                 total: count,
+                totalPages,
             },
             data,
             users
@@ -228,7 +230,7 @@ module.exports = {
 
         let { page, perPage } = ctx.query;
         page = page ?? 1;
-        perPage = perPage ?? VIDEO_PER_PAGE;
+        perPage = +(perPage ?? VIDEO_PER_PAGE);
 
         const limit = page * perPage;
         const offset = (page - 1) * perPage;
@@ -256,12 +258,14 @@ module.exports = {
             Promise.all(rows.map(v => v.serialize(ctx.user))),
             Promise.all(authors.map(u => u.serializeMin(ctx.user)))
         ]);
+        const totalPages = Math.ceil(count / perPage);
 
         ctx.body = {
             pagination: {
                 page,
                 perPage,
                 total: count,
+                totalPages,
             },
             data,
             users,
