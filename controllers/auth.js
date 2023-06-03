@@ -41,7 +41,7 @@ module.exports = {
             }
 
             if (Object.keys(validation).some(k => validation[k].length)) {
-                throw errorFactory(400, ERRORS.VALIDATION, validation);
+                throw errorFactory(400, ERRORS.VALIDATION, { data: validation });
             }
 
             const passwordHash = await bcrypt.hash(password, 10);
@@ -89,7 +89,7 @@ module.exports = {
         }
 
         if (Object.keys(validation).some(k => validation[k].length)) {
-            throw errorFactory(400, ERRORS.VALIDATION, validation);
+            throw errorFactory(400, ERRORS.VALIDATION, { data: validation });
         }
 
         const user = await User.findOne({
@@ -194,7 +194,7 @@ module.exports = {
         }
 
         if (Object.keys(validation).some(k => validation[k].length)) {
-            throw errorFactory(400, ERRORS.VALIDATION, validation);
+            throw errorFactory(400, ERRORS.VALIDATION, { data: validation });
         }
 
         const passwordHash = await bcrypt.hash(password, 10);
@@ -226,7 +226,7 @@ module.exports = {
         }
 
         if (Object.keys(validation).some(k => validation[k].length)) {
-            throw errorFactory(400, ERRORS.VALIDATION, validation);
+            throw errorFactory(400, ERRORS.VALIDATION, { data: validation });
         }
 
         const passwordHash = await bcrypt.hash(password, 10);

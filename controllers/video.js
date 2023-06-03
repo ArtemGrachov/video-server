@@ -27,7 +27,7 @@ module.exports = {
         }
 
         if (Object.keys(validation).some(k => validation[k].length)) {
-            throw errorFactory(400, ERRORS.VALIDATION, validation);
+            throw errorFactory(400, ERRORS.VALIDATION, { data: validation });
         }
 
         const cloudVideo = await upload(fileVideo.newFilename, 'video');
@@ -168,7 +168,7 @@ module.exports = {
         }
 
         if (Object.keys(validation).some(k => validation[k].length)) {
-            throw errorFactory(400, ERRORS.VALIDATION, validation);
+            throw errorFactory(400, ERRORS.VALIDATION, { data: validation });
         }
 
         const videoId = ctx.params.id;
@@ -218,7 +218,7 @@ module.exports = {
         }
 
         if (Object.keys(validation).some(k => validation[k].length)) {
-            throw errorFactory(400, ERRORS.VALIDATION, validation);
+            throw errorFactory(400, ERRORS.VALIDATION, { data: validation });
         }
 
         const video = await Video.findByPk(videoId);

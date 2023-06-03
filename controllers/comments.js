@@ -30,7 +30,7 @@ module.exports = {
         }
 
         if (Object.keys(validation).some(k => validation[k].length)) {
-            throw errorFactory(400, ERRORS.VALIDATION, validation);
+            throw errorFactory(400, ERRORS.VALIDATION, { data: validation });
         }
 
         const commentId = ctx.params.id;
