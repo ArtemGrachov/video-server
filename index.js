@@ -27,8 +27,8 @@ router.use(koaBody({
         uploadDir: path.resolve(__dirname, 'uploads')
     }
 }));
-router.use(userMiddleware);
 router.use(errorMiddleware);
+router.use(userMiddleware);
 
 router.use('/auth', authRouter.routes());
 router.use('/video', videoRouter.routes());
