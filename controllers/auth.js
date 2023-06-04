@@ -21,8 +21,9 @@ module.exports = {
             const name = body.name ?? '';
             const email = body.email ?? '';
             const password = body.password ?? '';
+            const passwordConfirmation = body.passwordConfirmation ?? '';
 
-            const validation = { name: [], email: [], password: [] };
+            const validation = { name: [], email: [], password: [], passwordConfirmation: [] };
 
             if (!name.trim()) {
                 validation.name.push({ rule: VALIDATION_RULES.REQUIRED });
@@ -38,6 +39,12 @@ module.exports = {
                 validation.password.push({ rule: VALIDATION_RULES.REQUIRED });
             } else if (!validatePassword(password)) {
                 validation.password.push({ rule: VALIDATION_RULES.VALIDATION_RULES })
+            }
+
+            if (!passwordConfirmation.trim()) {
+                validation.passwordConfirmation.push({ rule: VALIDATION_RULES.REQUIRED });
+            } else if (password !== passwordConfirmation) {
+                validation.passwordConfirmation.push({ rule: VALIDATION_RULES.PASSWORDS_ARE_NOT_EQUAL });
             }
 
             if (Object.keys(validation).some(k => validation[k].length)) {
@@ -222,7 +229,7 @@ module.exports = {
         if (!passwordConfirmation.trim()) {
             validation.passwordConfirmation.push({ rule: VALIDATION_RULES.REQUIRED });
         } else if (password !== passwordConfirmation) {
-            validation.passwordConfirmation.push({ rule: VALIDATION_RULES.REQUIRED });
+            validation.passwordConfirmation.push({ rule: VALIDATION_RULES.PASSWORDS_ARE_NOT_EQUAL });
         }
 
         if (Object.keys(validation).some(k => validation[k].length)) {
