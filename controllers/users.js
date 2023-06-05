@@ -126,9 +126,11 @@ module.exports = {
             throw errorFactory(404, ERRORS.NOT_FOUND);
         }
 
-        let { page, perPage } = ctx.query;
+        let { page, perPage, order, sortBy } = ctx.query;
         page = page ?? 1;
         perPage = +(perPage ?? USERS_PER_PAGE);
+        order = SORTING_ORDERS.includes(order) ? order : SORTING_ORDER.DESC;
+        sortBy = VIDEO_SORT_BY.includes(sortBy) ? sortBy : 'createdAt';
 
         const limit = page * perPage;
         const offset = (page - 1) * perPage;
@@ -138,6 +140,7 @@ module.exports = {
             user.getSubscription({
                 limit,
                 offset,
+                order: [[sortBy, order]],
             }),
         ]);
 
@@ -164,9 +167,11 @@ module.exports = {
             throw errorFactory(404, ERRORS.NOT_FOUND);
         }
 
-        let { page, perPage } = ctx.query;
+        let { page, perPage, order, sortBy } = ctx.query;
         page = page ?? 1;
         perPage = +(perPage ?? USERS_PER_PAGE);
+        order = SORTING_ORDERS.includes(order) ? order : SORTING_ORDER.DESC;
+        sortBy = VIDEO_SORT_BY.includes(sortBy) ? sortBy : 'createdAt';
 
         const limit = page * perPage;
         const offset = (page - 1) * perPage;
@@ -176,6 +181,7 @@ module.exports = {
             user.getSubscriber({
                 limit,
                 offset,
+                order: [[sortBy, order]],
             }),
         ]);
 
@@ -194,9 +200,11 @@ module.exports = {
     },
 
     async getUsers(ctx) {
-        let { page, perPage, search } = ctx.query;
+        let { page, perPage, search, order, sortBy } = ctx.query;
         page = page ?? 1;
         perPage = +(perPage ?? USERS_PER_PAGE);
+        order = SORTING_ORDERS.includes(order) ? order : SORTING_ORDER.DESC;
+        sortBy = VIDEO_SORT_BY.includes(sortBy) ? sortBy : 'createdAt';
 
         const limit = page * perPage;
         const offset = (page - 1) * perPage;
@@ -225,7 +233,8 @@ module.exports = {
         const { count, rows } = await User.findAndCountAll({
             where,
             limit,
-            offset
+            offset,
+            order: [[sortBy, order]],
         });
 
         const data = await Promise.all(rows.map(p => p.serialize(ctx.user)));

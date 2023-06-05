@@ -4,12 +4,13 @@ const ERRORS = require('../constants/errors');
 const { COMMENTS_PER_PAGE } = require('../constants/comments');
 const { MEDIA_TYPES } = require('../constants/media');
 const { VALIDATION_RULES } = require('../constants/validation');
-const { VIDEO_PER_PAGE } = require('../constants/video');
+const { VIDEO_PER_PAGE, VIDEO_SORT_BY } = require('../constants/video');
 
 const database = require('../models');
 
 const { errorFactory } = require('../utils/error-factory');
 const { upload, removeLocalFile } = require('../utils/upload');
+const { SORTING_ORDER, SORTING_ORDERS } = require('../constants/sorting');
 
 const { Video, User } = database.sequelize.models;
 
@@ -75,7 +76,7 @@ module.exports = {
     },
 
     async getVideos(ctx) {
-        let { page, perPage, userIds, subscriptions, search } = ctx.query;
+        let { page, perPage, userIds, subscriptions, search, sortBy, order } = ctx.query;
 
         page = page ?? 1;
         perPage = +(perPage ?? VIDEO_PER_PAGE);
@@ -119,11 +120,15 @@ module.exports = {
             )
         }
 
+        order = SORTING_ORDERS.includes(order) ? order : SORTING_ORDER.DESC;
+        sortBy = VIDEO_SORT_BY.includes(sortBy) ? sortBy : 'createdAt';
+
         const { count, rows } = await Video.findAndCountAll({
             where,
             limit,
             offset,
             include: 'media',
+            order: [[sortBy, order]],
         });
 
         const authorIds = Array.from(new Set(rows.map(p => p.authorId)));
@@ -255,18 +260,21 @@ module.exports = {
             throw errorFactory(404, ERRORS.NOT_FOUND);
         }
 
-        let { page, perPage } = ctx.query;
+        let { page, perPage, order, sortBy } = ctx.query;
         page = page ?? 1;
         perPage = +(perPage ?? COMMENTS_PER_PAGE);
 
         const limit = page * perPage;
         const offset = (page - 1) * perPage;
+        order = SORTING_ORDERS.includes(order) ? order : SORTING_ORDER.DESC;
+        sortBy = VIDEO_SORT_BY.includes(sortBy) ? sortBy : 'createdAt';
 
         const [count, rows] = await Promise.all([
             video.countComments(),
             video.getComments({
                 limit,
                 offset,
+                order: [[sortBy, order]],
             }),
         ]);
 

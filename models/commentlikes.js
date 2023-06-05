@@ -12,7 +12,7 @@ module.exports = (sequelize, DataTypes) => {
                         onDelete: 'CASCADE',
                     },
                 );
-                CommentLikes
+            CommentLikes
                 .belongsTo(
                     models.User,
                     {

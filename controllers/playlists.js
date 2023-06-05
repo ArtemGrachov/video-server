@@ -60,9 +60,11 @@ module.exports = {
     },
 
     async getPlaylists(ctx) {
-        let { page, perPage, userIds, search } = ctx.query;
+        let { page, perPage, userIds, search, order, sortBy } = ctx.query;
         page = page ?? 1;
         perPage = +(perPage ?? PLAYLISTS_PER_PAGE);
+        order = SORTING_ORDERS.includes(order) ? order : SORTING_ORDER.DESC;
+        sortBy = VIDEO_SORT_BY.includes(sortBy) ? sortBy : 'createdAt';
 
         const limit = page * perPage;
         const offset = (page - 1) * perPage;
@@ -98,7 +100,8 @@ module.exports = {
         const { count, rows } = await Playlist.findAndCountAll({
             where,
             limit,
-            offset
+            offset,
+            order: [[sortBy, order]],
         });
 
         const authorIds = Array.from(new Set(rows.map(p => p.authorId)));
@@ -228,9 +231,11 @@ module.exports = {
             throw errorFactory(404, ERRORS.NOT_FOUND);
         }
 
-        let { page, perPage } = ctx.query;
+        let { page, perPage, order, sortBy } = ctx.query;
         page = page ?? 1;
         perPage = +(perPage ?? VIDEO_PER_PAGE);
+        order = SORTING_ORDERS.includes(order) ? order : SORTING_ORDER.DESC;
+        sortBy = VIDEO_SORT_BY.includes(sortBy) ? sortBy : 'createdAt';
 
         const limit = page * perPage;
         const offset = (page - 1) * perPage;
@@ -239,8 +244,9 @@ module.exports = {
             playlist.countPlaylistVideos(),
             playlist.getPlaylistVideos({
                 limit,
-                offset
-            })
+                offset,
+                order: [[sortBy, order]],
+            }),
         ]);
 
         const authorIds = Array.from(new Set(rows.map(p => p.authorId)));

@@ -30,13 +30,14 @@ module.exports = (sequelize, DataTypes) => {
         }
 
         serialize(user) {
-            const { id, content, author, authorId } = this;
+            const { id, content, author, authorId, createdAt } = this;
 
             return {
                 id,
                 content,
                 authorId,
                 author: author?.serialize(),
+                createdAt,
             };
         }
     }
