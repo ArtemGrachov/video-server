@@ -83,8 +83,8 @@ module.exports = (sequelize, DataTypes) => {
             return {
                 id,
                 name,
-                avatar,
-                email: user.id === id ? email : undefined,
+                avatar: avatar?.serialize(),
+                email: user?.id === id ? email : undefined,
                 isSubscription,
             };
         }

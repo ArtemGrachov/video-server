@@ -53,13 +53,25 @@ module.exports = {
     async getVideo(ctx) {
         const videoId = ctx.params.id;
 
-        const video = await Video.findByPk(videoId, { include: 'media' });
+        const video = await Video.findByPk(
+            videoId,
+            {
+                include: [
+                    'media',
+                    {
+                        model: User,
+                        as: 'author',
+                        include: 'avatar',
+                    },
+                ]
+            }
+        );
 
         if (!video) {
             throw errorFactory(404, ERRORS.NOT_FOUND);
         }
 
-        ctx.body = await video.serialize();
+        ctx.body = await video.serialize(ctx.user);
     },
 
     async getVideos(ctx) {
