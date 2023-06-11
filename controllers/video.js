@@ -249,7 +249,7 @@ module.exports = {
             authorId: ctx.user.id
         });
 
-        ctx.body = await comment.serialize();
+        ctx.body = await comment.serialize(ctx.user);
     },
 
     async videoGetComments(ctx) {

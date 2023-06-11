@@ -44,7 +44,7 @@ module.exports = {
 
         const commentUpdated = await Comment.findByPk(commentId);
 
-        ctx.body = commentUpdated.serialize();
+        ctx.body = await commentUpdated.serialize(ctx.user);
     },
 
     async likeComment(ctx) {
