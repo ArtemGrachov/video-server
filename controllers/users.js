@@ -70,7 +70,15 @@ module.exports = {
     },
 
     async getUser(ctx) {
-        const { userId } = ctx.params;
+        let { userId } = ctx.params;
+
+        if (userId === 'self') {
+            if (ctx.user) {
+                userId = ctx.user.id;
+            } else {
+                throw errorFactory(401, ERRORS.NOT_AUTHENTICATED);
+            }
+        }
 
         const user = await User.findByPk(userId, { include: 'avatar' });
 
