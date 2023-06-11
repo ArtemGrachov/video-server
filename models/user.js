@@ -29,6 +29,7 @@ module.exports = (sequelize, DataTypes) => {
                     through: 'CommentLikes',
                     as: 'commentLikes',
                     foreignKey: 'userId',
+                    onDelete: 'CASCADE',
                 },
             );
             User.belongsToMany(

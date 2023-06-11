@@ -25,6 +25,7 @@ module.exports = (sequelize, DataTypes) => {
                     through: 'CommentLikes',
                     as: 'likes',
                     foreignKey: 'commentId',
+                    onDelete: 'CASCADE',
                 },
             );
         }
