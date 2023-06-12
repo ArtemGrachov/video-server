@@ -220,7 +220,7 @@ module.exports = {
 
         const videoUpdated = await Video.findByPk(videoId);
 
-        ctx.body = videoUpdated.serialize();
+        ctx.body = await videoUpdated.serialize(ctx.user);
     },
 
     async videoCreateComment(ctx) {
