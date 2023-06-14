@@ -3,7 +3,8 @@ const { Sequelize, Op } = require('sequelize');
 const ERRORS = require('../constants/errors');
 const { MEDIA_TYPES } = require('../constants/media');
 const { VALIDATION_RULES } = require('../constants/validation');
-const { USERS_PER_PAGE } = require('../constants/users');
+const { USERS_PER_PAGE, USERS_SORT_BY } = require('../constants/users');
+const { SORTING_ORDER, SORTING_ORDERS } = require('../constants/sorting');
 const { errorFactory } = require('../utils/error-factory');
 const { upload, removeLocalFile } = require('../utils/upload');
 
@@ -138,7 +139,7 @@ module.exports = {
         page = page ?? 1;
         perPage = +(perPage ?? USERS_PER_PAGE);
         order = SORTING_ORDERS.includes(order) ? order : SORTING_ORDER.DESC;
-        sortBy = VIDEO_SORT_BY.includes(sortBy) ? sortBy : 'createdAt';
+        sortBy = USERS_SORT_BY.includes(sortBy) ? sortBy : 'createdAt';
 
         const limit = page * perPage;
         const offset = (page - 1) * perPage;
@@ -179,7 +180,7 @@ module.exports = {
         page = page ?? 1;
         perPage = +(perPage ?? USERS_PER_PAGE);
         order = SORTING_ORDERS.includes(order) ? order : SORTING_ORDER.DESC;
-        sortBy = VIDEO_SORT_BY.includes(sortBy) ? sortBy : 'createdAt';
+        sortBy = USERS_SORT_BY.includes(sortBy) ? sortBy : 'createdAt';
 
         const limit = page * perPage;
         const offset = (page - 1) * perPage;
@@ -212,7 +213,7 @@ module.exports = {
         page = page ?? 1;
         perPage = +(perPage ?? USERS_PER_PAGE);
         order = SORTING_ORDERS.includes(order) ? order : SORTING_ORDER.DESC;
-        sortBy = VIDEO_SORT_BY.includes(sortBy) ? sortBy : 'createdAt';
+        sortBy = USERS_SORT_BY.includes(sortBy) ? sortBy : 'createdAt';
 
         const limit = page * perPage;
         const offset = (page - 1) * perPage;

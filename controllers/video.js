@@ -1,7 +1,7 @@
 const { Op, Sequelize } = require('sequelize');
 
 const ERRORS = require('../constants/errors');
-const { COMMENTS_PER_PAGE } = require('../constants/comments');
+const { COMMENTS_PER_PAGE, COMMENTS_SORT_BY } = require('../constants/comments');
 const { MEDIA_TYPES } = require('../constants/media');
 const { VALIDATION_RULES } = require('../constants/validation');
 const { VIDEO_PER_PAGE, VIDEO_SORT_BY } = require('../constants/video');
@@ -267,7 +267,7 @@ module.exports = {
         const limit = page * perPage;
         const offset = (page - 1) * perPage;
         order = SORTING_ORDERS.includes(order) ? order : SORTING_ORDER.DESC;
-        sortBy = VIDEO_SORT_BY.includes(sortBy) ? sortBy : 'createdAt';
+        sortBy = COMMENTS_SORT_BY.includes(sortBy) ? sortBy : 'createdAt';
 
         const [count, rows] = await Promise.all([
             video.countComments(),

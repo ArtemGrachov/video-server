@@ -1,9 +1,10 @@
 const { Op, Sequelize } = require('sequelize');
 
 const ERRORS = require('../constants/errors');
-const { PLAYLISTS_PER_PAGE } = require('../constants/playlists');
+const { PLAYLISTS_PER_PAGE, PLAYLISTS_SORT_BY } = require('../constants/playlists');
 const { VALIDATION_RULES } = require('../constants/validation');
 const { VIDEO_PER_PAGE } = require('../constants/video');
+const { SORTING_ORDER, SORTING_ORDERS } = require('../constants/sorting');
 
 const database = require('../models');
 
@@ -64,7 +65,7 @@ module.exports = {
         page = page ?? 1;
         perPage = +(perPage ?? PLAYLISTS_PER_PAGE);
         order = SORTING_ORDERS.includes(order) ? order : SORTING_ORDER.DESC;
-        sortBy = VIDEO_SORT_BY.includes(sortBy) ? sortBy : 'createdAt';
+        sortBy = PLAYLISTS_SORT_BY.includes(sortBy) ? sortBy : 'createdAt';
 
         const limit = page * perPage;
         const offset = (page - 1) * perPage;
@@ -235,7 +236,7 @@ module.exports = {
         page = page ?? 1;
         perPage = +(perPage ?? VIDEO_PER_PAGE);
         order = SORTING_ORDERS.includes(order) ? order : SORTING_ORDER.DESC;
-        sortBy = VIDEO_SORT_BY.includes(sortBy) ? sortBy : 'createdAt';
+        sortBy = PLAYLISTS_SORT_BY.includes(sortBy) ? sortBy : 'createdAt';
 
         const limit = page * perPage;
         const offset = (page - 1) * perPage;
