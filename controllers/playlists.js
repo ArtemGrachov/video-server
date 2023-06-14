@@ -34,7 +34,7 @@ module.exports = {
             authorId: ctx.user.id
         });
 
-        ctx.body = playlist.serialize();
+        ctx.body = await playlist.serialize(ctx.user);
     },
 
     async getPlaylist(ctx) {
@@ -57,7 +57,7 @@ module.exports = {
             throw errorFactory(404, ERRORS.NOT_FOUND);
         }
 
-        ctx.body = playlist.serialize();
+        ctx.body = await playlist.serialize(ctx.user);
     },
 
     async getPlaylists(ctx) {
@@ -175,7 +175,7 @@ module.exports = {
 
         const playlistUpdated = await Playlist.findByPk(playlistId);
 
-        ctx.body = playlistUpdated.serialize();
+        ctx.body = await playlistUpdated.serialize(ctx.user);
     },
 
     async addVideosToPlaylist(ctx) {
@@ -246,6 +246,7 @@ module.exports = {
             playlist.getPlaylistVideos({
                 limit,
                 offset,
+                include: ['media'],
                 order: [[sortBy, order]],
             }),
         ]);
