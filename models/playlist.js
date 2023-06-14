@@ -30,6 +30,7 @@ module.exports = (sequelize, DataTypes) => {
                 description,
                 authorId,
                 author: await author?.serialize(),
+                videoCount: await this.countPlaylistVideos(),
             };
         }
     }
