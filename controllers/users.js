@@ -5,8 +5,10 @@ const { MEDIA_TYPES } = require('../constants/media');
 const { VALIDATION_RULES } = require('../constants/validation');
 const { USERS_PER_PAGE, USERS_SORT_BY } = require('../constants/users');
 const { SORTING_ORDER, SORTING_ORDERS } = require('../constants/sorting');
+
 const { errorFactory } = require('../utils/error-factory');
 const { upload, removeLocalFile } = require('../utils/upload');
+const { isEmail } = require('../utils/validators');
 
 const database = require('../models');
 
@@ -60,7 +62,7 @@ module.exports = {
         }
 
         if (email != null) {
-            user.emai = email;
+            user.email = email;
         }
 
         await user.save();
