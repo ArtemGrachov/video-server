@@ -62,12 +62,11 @@ module.exports = {
 
     async getPlaylists(ctx) {
         let { page, perPage, userIds, search, order, sortBy } = ctx.query;
-        page = page ?? 1;
+        page = +(page ?? 1);
         perPage = +(perPage ?? PLAYLISTS_PER_PAGE);
         order = SORTING_ORDERS.includes(order) ? order : SORTING_ORDER.DESC;
         sortBy = PLAYLISTS_SORT_BY.includes(sortBy) ? sortBy : 'createdAt';
 
-        const limit = page * perPage;
         const offset = (page - 1) * perPage;
 
         const where = [];
@@ -100,7 +99,7 @@ module.exports = {
 
         const { count, rows } = await Playlist.findAndCountAll({
             where,
-            limit,
+            limit: perPage,
             offset,
             order: [[sortBy, order]],
         });
@@ -128,6 +127,8 @@ module.exports = {
                 perPage,
                 total: count,
                 totalPages,
+                limit: perPage,
+                offset
             },
             data,
             users
@@ -238,13 +239,12 @@ module.exports = {
         order = SORTING_ORDERS.includes(order) ? order : SORTING_ORDER.DESC;
         sortBy = PLAYLISTS_SORT_BY.includes(sortBy) ? sortBy : 'createdAt';
 
-        const limit = page * perPage;
         const offset = (page - 1) * perPage;
 
         const [count, rows] = await Promise.all([
             playlist.countPlaylistVideos(),
             playlist.getPlaylistVideos({
-                limit,
+                limit: perPage,
                 offset,
                 include: ['media'],
                 order: [[sortBy, order]],

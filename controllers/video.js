@@ -81,7 +81,6 @@ module.exports = {
         page = page ?? 1;
         perPage = +(perPage ?? VIDEO_PER_PAGE);
 
-        const limit = page * perPage;
         const offset = (page - 1) * perPage;
 
         const where = [];
@@ -125,7 +124,7 @@ module.exports = {
 
         const { count, rows } = await Video.findAndCountAll({
             where,
-            limit,
+            limit: perPage,
             offset,
             include: 'media',
             order: [[sortBy, order]],
@@ -264,7 +263,6 @@ module.exports = {
         page = page ?? 1;
         perPage = +(perPage ?? COMMENTS_PER_PAGE);
 
-        const limit = page * perPage;
         const offset = (page - 1) * perPage;
         order = SORTING_ORDERS.includes(order) ? order : SORTING_ORDER.DESC;
         sortBy = COMMENTS_SORT_BY.includes(sortBy) ? sortBy : 'createdAt';
@@ -272,7 +270,7 @@ module.exports = {
         const [count, rows] = await Promise.all([
             video.countComments(),
             video.getComments({
-                limit,
+                limit: perPage,
                 offset,
                 order: [[sortBy, order]],
             }),

@@ -143,13 +143,12 @@ module.exports = {
         order = SORTING_ORDERS.includes(order) ? order : SORTING_ORDER.DESC;
         sortBy = USERS_SORT_BY.includes(sortBy) ? sortBy : 'createdAt';
 
-        const limit = page * perPage;
         const offset = (page - 1) * perPage;
 
         const [count, rows] = await Promise.all([
             user.countSubscription(),
             user.getSubscription({
-                limit,
+                limit: perPage,
                 offset,
                 order: [[sortBy, order]],
             }),
@@ -184,13 +183,12 @@ module.exports = {
         order = SORTING_ORDERS.includes(order) ? order : SORTING_ORDER.DESC;
         sortBy = USERS_SORT_BY.includes(sortBy) ? sortBy : 'createdAt';
 
-        const limit = page * perPage;
         const offset = (page - 1) * perPage;
 
         const [count, rows] = await Promise.all([
             user.countSubscriber(),
             user.getSubscriber({
-                limit,
+                limit: perPage,
                 offset,
                 order: [[sortBy, order]],
             }),
@@ -217,7 +215,6 @@ module.exports = {
         order = SORTING_ORDERS.includes(order) ? order : SORTING_ORDER.DESC;
         sortBy = USERS_SORT_BY.includes(sortBy) ? sortBy : 'createdAt';
 
-        const limit = page * perPage;
         const offset = (page - 1) * perPage;
 
         const where = [];
@@ -243,7 +240,7 @@ module.exports = {
 
         const { count, rows } = await User.findAndCountAll({
             where,
-            limit,
+            limit: perPage,
             offset,
             order: [[sortBy, order]],
         });
