@@ -3,7 +3,7 @@ const errorFactory = (status, message, data = {}) => {
         status: status ?? 500,
         data: {
             message,
-            ...data
+            data
         }
     };
 };
