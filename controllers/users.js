@@ -243,6 +243,7 @@ module.exports = {
             limit: perPage,
             offset,
             order: [[sortBy, order]],
+            include: 'avatar',
         });
 
         const data = await Promise.all(rows.map(p => p.serialize(ctx.user)));
