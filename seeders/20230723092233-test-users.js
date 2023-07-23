@@ -1,8 +1,8 @@
 const fs = require('fs');
+const path = require('path');
 const bcrypt = require('bcryptjs');
 const dayjs = require('dayjs');
 const { Op } = require('sequelize');
-const path = require('path');
 const Jabber = require('jabber').default;
 const cloudinary = require('cloudinary').v2;
 
