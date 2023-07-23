@@ -126,6 +126,26 @@ module.exports = {
             },
         });
 
+        const seededUsersVideo = await queryInterface.rawSelect('Videos',
+            {
+                where: {
+                    authorId: {
+                        [Op.in]: ids,
+                    },
+                },
+                plain: false,
+            },
+            ['id']
+        );
+
+        const videoIds = seededUsersVideo.map(video => video.id);
+
+        await queryInterface.bulkDelete('Videos', {
+            id: {
+                [Op.in]: videoIds,
+            },
+        });
+
         await queryInterface.bulkDelete('Users', {
             email: {
                 [Op.like]: `%${EMAIL_DOMAIN}`,
