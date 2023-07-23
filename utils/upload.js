@@ -3,10 +3,10 @@ const fs = require('fs');
 const path = require('path');
 
 module.exports = {
-    upload(fileName, resourceType) {
+    upload(fileName, resourceType, customPath = false) {
         return new Promise((resolve, reject) => {
             cloudinary.uploader.upload(
-                `./uploads/${fileName}`,
+                customPath ? fileName : `./uploads/${fileName}`,
                 {
                     resource_type: resourceType,
                     folder: process.env.CLOUDINARY_FOLDER
