@@ -22,7 +22,7 @@ const sequelize = new Sequelize(
   config[environment].username,
   config[environment].password,
   {
-    dialect: 'mysql',
+    dialect: process.env.DB_DIALECT ?? 'mysql',
     host: config[environment].host,
     port: config[environment].port,
   },

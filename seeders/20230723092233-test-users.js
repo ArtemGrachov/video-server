@@ -16,7 +16,9 @@ const EMAIL_DOMAIN = 'seed-video-db.com';
 module.exports = {
     async up(queryInterface, Sequelize) {
         const date = dayjs().format('YYYY-MM-DD HH:mm:ss');
+        const timestamp = dayjs().millisecond();
         const jabber = new Jabber();
+        const emailDomain = timestamp + '_' + EMAIL_DOMAIN;
 
         const avatarAssets = await new Promise((resolve, reject) => {
             fs.readdir(path.join(__dirname, '../seed-assets', 'images'), (err, files) => {
@@ -33,7 +35,7 @@ module.exports = {
             const passwordLength = Math.max(Math.floor(Math.random() * 15), 8);
 
             const result = {
-                email: jabber.createEmail(EMAIL_DOMAIN),
+                email: jabber.createEmail(emailDomain),
                 name: jabber.createWord(nameLength, true),
                 password: await bcrypt.hash(jabber.createWord(passwordLength, true) + Math.ceil(Math.random() * 100), 10),
                 createdAt: date,
@@ -49,7 +51,7 @@ module.exports = {
         const seedUsers = await queryInterface.rawSelect('Users', {
             where: {
                 email: {
-                    [Op.like]: `%${EMAIL_DOMAIN}`,
+                    [Op.like]: `%${emailDomain}`,
                 }
             },
             plain: false,

@@ -9,8 +9,9 @@ const { MEDIA_TYPES } = require('../constants/media');
 const { upload } = require('../utils/upload');
 
 const EMAIL_DOMAIN = 'seed-video-db.com';
+const MAX_VIDEO = 3;
 
-const DISCLAMER = '\n Created with test purposes. All the right for video used here belongs to their owners. Video is taken from pexels.com as the free-to-use content.';
+const DISCLAMER = '\n Created with test purposes. All the right for video used here belongs to their owners. Video is taken from pexels.com as free-to-use content.';
 
 /** @type {import('sequelize-cli').Migration} */
 module.exports = {
@@ -40,7 +41,7 @@ module.exports = {
         const ids = seedUsers.map(user => user.id);
 
         const userVideosPayload = seedUsers.reduce((acc, curr) => {
-            const videoCount = Math.floor(Math.random() * 5);
+            const videoCount = Math.floor(Math.random() * MAX_VIDEO);
 
             const payloads = Array(videoCount).fill(null).map(() => {
                 const nameLength = Math.max(Math.floor(Math.random() * 5), 1);
